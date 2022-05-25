@@ -167,8 +167,8 @@ namespace MediaWPF
             planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, 0);
             planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, videoWidth * videoHeight);
             planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, videoWidth * videoHeight + videoWidth * videoHeight / 4);
-            return 1;
 
+            return 1;
         }
 
         public IntPtr LockVideo(IntPtr opaque, IntPtr planes)
