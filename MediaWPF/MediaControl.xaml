@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="MediaWPF.MediaControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
+             x:Name="UserMain" MouseLeftButtonUp="UserMain_MouseLeftButtonUp" Loaded="UserMain_Loaded">
+    <UserControl.CacheMode>
+        <BitmapCache/>
+    </UserControl.CacheMode>
+    <Grid>
+        <glWpfControl:GLWpfControl x:Name="OpenTkControl" Render="OpenTkControl_OnRender"/>
+    </Grid>
+</UserControl>
