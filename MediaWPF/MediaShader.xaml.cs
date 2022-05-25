@@ -36,7 +36,7 @@ namespace MediaWPF
 
         private readonly Stopwatch stopwatch = new();
 
-        private readonly string _path = @"E:\BaiduNetdiskDownload\[A]ddiction _2160p.mp4";
+        private readonly string _path = @"E:\BaiduNetdiskDownload\LG 8K OLED  60FPS DEMO.webm";
         private Uri _uri;
         private LibVLC _lib;
         private Media _media;
@@ -62,6 +62,19 @@ namespace MediaWPF
         {
             if (File.Exists(_path))
             {
+                DependencyObject dependencyObject = LogicalTreeHelper.GetParent(this);
+                while (dependencyObject != null)
+                {
+                    if (dependencyObject is MainWindow mainWindow)
+                    {
+                        mainWindow.Title = new FileInfo(_path).Name;
+                        break;
+                    }
+                    else
+                    {
+                        dependencyObject = LogicalTreeHelper.GetParent(dependencyObject);
+                    }
+                }
                 _uri = new(_path);
                 _lib = new();
                 _media = new(_lib, _uri, new string[] { "input-repeat=65535" });
@@ -76,11 +89,6 @@ namespace MediaWPF
             }
         }
 
-        private void GlMedia_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
-
         private void GlMedia_Loaded(object sender, RoutedEventArgs e)
         {
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -92,7 +100,8 @@ namespace MediaWPF
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StreamDraw);
 
-            _shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
+            string p = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Shaders");
+            _shader = new Shader(Path.Combine(p, "shader.vert"), Path.Combine(p, "shader.frag"));
             _shader.Use();
 
             textureUniformY = GL.GetUniformLocation(_shader.Handle, "tex_y");
@@ -138,10 +147,11 @@ namespace MediaWPF
                         {
                             width = trackInfo.Width;
                             height = trackInfo.Height;
-                            if (trackInfo.SarDen != 0)
-                            {
-                                width = width * trackInfo.SarNum / trackInfo.SarDen;
-                            }
+                            // 不清楚为啥要这么算。
+                            //if (trackInfo.SarDen != 0)
+                            //{
+                            //    width = width * trackInfo.SarNum / trackInfo.SarDen;
+                            //}
                         }
 
                         break;
@@ -163,6 +173,15 @@ namespace MediaWPF
             planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, 0);
             planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, videoWidth * videoHeight);
             planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, videoWidth * videoHeight + videoWidth * videoHeight / 4);
+
+            // GLWpfControl控件外层嵌套Viewbox进行比例缩放，防止视频比例变形。
+            // 但会影响渲染性能。
+            Dispatcher.Invoke(delegate
+            {
+                glMedia.Width = videoWidth;
+                glMedia.Height = videoHeight;
+            });
+
             return 1;
         }
 

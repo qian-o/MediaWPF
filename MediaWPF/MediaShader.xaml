@@ -8,6 +8,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <Grid>
-        <glWpfControl:GLWpfControl x:Name="glMedia" Loaded="GlMedia_Loaded" SizeChanged="GlMedia_SizeChanged" Render="GlMedia_Render"/>
+        <Viewbox x:Name="vibMedia">
+            <glWpfControl:GLWpfControl x:Name="glMedia" Loaded="GlMedia_Loaded" Render="GlMedia_Render"/>
+        </Viewbox>
     </Grid>
 </UserControl>
