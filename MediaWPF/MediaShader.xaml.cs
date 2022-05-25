@@ -3,6 +3,7 @@ using MediaWPF.Shaders;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Wpf;
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,13 +60,13 @@ namespace MediaWPF
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            // _uri = new(@"E:\BaiduNetdiskDownload\[A]ddiction _2160p_HDR_Extreme.mp4");
+            // _uri = new(@"D:\BaiduNetdiskDownload\LG 8K OLED  60FPS DEMO.webm");
             // _uri = new(@"D:\BaiduNetdiskDownload\[A]ddiction _2160p.mp4");
             _uri = new(@"C:\Users\13247\Downloads\杜比视界\Sony_4K_Camp.mp4");
             // _uri = new(@"D:\BaiduNetdiskDownload\4K120帧HDR.mp4");
             // _uri = new(@"E:\BaiduNetdiskDownload\NARAKA  BLADEPOINT 3440p 60.mp4");
             _lib = new();
-            _media = new(_lib, _uri, new string[] { "input-repeat=65535", "avcodec-hw=any" });
+            _media = new(_lib, _uri, new string[] { "input-repeat=65535", "avcodec-hw=d3d11va" });
             _mediaplayer = new(_media);
 
             _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
@@ -125,6 +126,7 @@ namespace MediaWPF
         #region VLC解码
         public uint VideoFormat(ref IntPtr opaque, IntPtr chroma, ref uint width, ref uint height, IntPtr pitches, IntPtr lines)
         {
+            Debug.WriteLine(Marshal.PtrToStringAnsi(chroma));
             byte[] bytes = Encoding.ASCII.GetBytes("I420");
             for (var i = 0; i < bytes.Length; i++)
             {
