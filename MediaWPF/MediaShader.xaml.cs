@@ -51,40 +51,31 @@ namespace MediaWPF
         {
             InitializeComponent();
 
-            GLWpfControlSettings gLWpfControlSettings = new()
-            {
-                RenderContinuously = false
-            };
+            GLWpfControlSettings gLWpfControlSettings = new();
             glMedia.Start(gLWpfControlSettings);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            // _uri = new(@"D:\BaiduNetdiskDownload\LG 8K OLED  60FPS DEMO.webm");
-            // _uri = new(@"D:\BaiduNetdiskDownload\[A]ddiction _2160p.mp4");
-            _uri = new(@"C:\Users\13247\Downloads\杜比视界\Sony_4K_Camp.mp4");
-            // _uri = new(@"D:\BaiduNetdiskDownload\4K120帧HDR.mp4");
+            // _uri = new(@"E:\BaiduNetdiskDownload\V20524-150000.mp4");
+            // _uri = new(@"E:\BaiduNetdiskDownload\[A]ddiction _2160p.mp4");
+            // _uri = new(@"C:\Users\13247\Downloads\杜比视界\Sony_4K_Camp.mp4");
+            _uri = new(@"D:\BaiduNetdiskDownload\4K120帧HDR.mp4");
             // _uri = new(@"E:\BaiduNetdiskDownload\NARAKA  BLADEPOINT 3440p 60.mp4");
             _lib = new();
-            _media = new(_lib, _uri, new string[] { "input-repeat=65535", "avcodec-hw=d3d11va" });
+            _media = new(_lib, _uri, new string[] { "input-repeat=65535" });
             _mediaplayer = new(_media);
 
+            _mediaplayer.EnableHardwareDecoding = true;
             _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
             _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
+            _mediaplayer.Mute = true;
             _mediaplayer.Play();
         }
 
         private void GlMedia_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            int w = videoWidth;
-            int h = videoHeight;
-            while (w > glMedia.FrameBufferWidth || h > glMedia.FrameBufferHeight)
-            {
-                w = Convert.ToInt32(w * 0.9);
-                h = Convert.ToInt32(h * 0.9);
-            }
 
-            GL.Viewport(glMedia.FrameBufferWidth / 2 - w / 2, glMedia.FrameBufferHeight / 2 - h / 2, w, h);
         }
 
         private void GlMedia_Loaded(object sender, RoutedEventArgs e)
@@ -182,17 +173,7 @@ namespace MediaWPF
 
         public void DisplayVideo(IntPtr opaque, IntPtr picture)
         {
-            try
-            {
-                Dispatcher.Invoke(delegate
-                {
-                    glMedia.InvalidateVisual();
-                });
-            }
-            catch (TaskCanceledException)
-            {
 
-            }
         }
         #endregion
 
