@@ -34,7 +34,7 @@ namespace MediaWPF
         private Shader _shader;
         #endregion
 
-        private Stopwatch stopwatch = new();
+        private readonly Stopwatch stopwatch = new();
 
         private readonly string _path = @"E:\BaiduNetdiskDownload\[A]ddiction _2160p.mp4";
         private Uri _uri;
