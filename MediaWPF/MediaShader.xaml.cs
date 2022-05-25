@@ -4,9 +4,9 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Wpf;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
@@ -34,6 +34,9 @@ namespace MediaWPF
         private Shader _shader;
         #endregion
 
+        private Stopwatch stopwatch = new();
+
+        private readonly string _path = @"E:\BaiduNetdiskDownload\[A]ddiction _2160p.mp4";
         private Uri _uri;
         private LibVLC _lib;
         private Media _media;
@@ -57,20 +60,20 @@ namespace MediaWPF
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            // _uri = new(@"E:\BaiduNetdiskDownload\V20524-150000.mp4");
-            // _uri = new(@"E:\BaiduNetdiskDownload\[A]ddiction _2160p.mp4");
-            // _uri = new(@"C:\Users\13247\Downloads\杜比视界\Sony_4K_Camp.mp4");
-            _uri = new(@"D:\BaiduNetdiskDownload\4K120帧HDR.mp4");
-            // _uri = new(@"E:\BaiduNetdiskDownload\NARAKA  BLADEPOINT 3440p 60.mp4");
-            _lib = new();
-            _media = new(_lib, _uri, new string[] { "input-repeat=65535" });
-            _mediaplayer = new(_media);
-
-            _mediaplayer.EnableHardwareDecoding = true;
-            _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
-            _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
-            _mediaplayer.Mute = true;
-            _mediaplayer.Play();
+            if (File.Exists(_path))
+            {
+                _uri = new(_path);
+                _lib = new();
+                _media = new(_lib, _uri, new string[] { "input-repeat=65535" });
+                _mediaplayer = new(_media)
+                {
+                    EnableHardwareDecoding = true
+                };
+                _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
+                _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
+                _mediaplayer.Mute = true;
+                _mediaplayer.Play();
+            }
         }
 
         private void GlMedia_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -160,7 +163,6 @@ namespace MediaWPF
             planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, 0);
             planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, videoWidth * videoHeight);
             planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, videoWidth * videoHeight + videoWidth * videoHeight / 4);
-
             return 1;
         }
 
@@ -171,9 +173,11 @@ namespace MediaWPF
             return IntPtr.Zero;
         }
 
-        public void DisplayVideo(IntPtr opaque, IntPtr picture)
+        public  void DisplayVideo(IntPtr opaque, IntPtr picture)
         {
-
+            stopwatch.Stop();
+            Console.WriteLine($"当前帧耗时：{stopwatch.ElapsedMilliseconds}");
+            stopwatch.Restart();
         }
         #endregion
 
