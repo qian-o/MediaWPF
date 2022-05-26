@@ -14,9 +14,9 @@ using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 namespace MediaWPF
 {
     /// <summary>
-    /// MediaShader.xaml 的交互逻辑
+    /// MediaShaderHDR.xaml 的交互逻辑
     /// </summary>
-    public partial class MediaShader : UserControl
+    public partial class MediaShaderHDR : UserControl
     {
         #region shader
         private readonly float[] _vertices =
@@ -36,21 +36,21 @@ namespace MediaWPF
 
         private readonly Stopwatch stopwatch = new();
 
-        private readonly string _path = @"E:\BaiduNetdiskDownload\LG 8K OLED  60FPS DEMO.webm";
+        private readonly string _path = @"E:\BaiduNetdiskDownload\[A]ddiction _2160p_HDR_Extreme.mp4";
         private Uri _uri;
         private LibVLC _lib;
         private Media _media;
         private MediaPlayer _mediaplayer;
         private int videoWidth;
         private int videoHeight;
-        private byte[] _buffer;
+        private short[] _buffer;
         private IntPtr planeY, planeU, planeV;
         private int id_y, id_u, id_v;
         private int buffer_y, buffer_u, buffer_v;
         private int textureUniformY, textureUniformU, textureUniformV;
         private bool isInitTexture;
 
-        public MediaShader()
+        public MediaShaderHDR()
         {
             InitializeComponent();
 
@@ -130,7 +130,7 @@ namespace MediaWPF
         public uint VideoFormat(ref IntPtr opaque, IntPtr chroma, ref uint width, ref uint height, IntPtr pitches, IntPtr lines)
         {
             Debug.WriteLine(Marshal.PtrToStringAnsi(chroma));
-            byte[] bytes = Encoding.ASCII.GetBytes("I420");
+            byte[] bytes = Encoding.ASCII.GetBytes("I0AL");
             for (var i = 0; i < bytes.Length; i++)
             {
                 Marshal.WriteByte(chroma, i, bytes[i]);
@@ -162,7 +162,7 @@ namespace MediaWPF
             videoWidth = (int)width;
             videoHeight = (int)height;
 
-            _buffer = new byte[width * height * 12 / 8];
+            _buffer = new short[width * height * 12 / 8];
             opaque = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, 0);
 
             planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, 0);
@@ -187,7 +187,7 @@ namespace MediaWPF
             return IntPtr.Zero;
         }
 
-        public  void DisplayVideo(IntPtr opaque, IntPtr picture)
+        public void DisplayVideo(IntPtr opaque, IntPtr picture)
         {
             stopwatch.Stop();
             Console.WriteLine($"当前帧耗时：{stopwatch.ElapsedMilliseconds}");
@@ -202,7 +202,7 @@ namespace MediaWPF
                 //Init Texture
                 id_y = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_y);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth, videoHeight, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth, videoHeight, 0, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -210,7 +210,7 @@ namespace MediaWPF
 
                 id_u = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_u);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -218,7 +218,7 @@ namespace MediaWPF
 
                 id_v = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_v);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -248,7 +248,7 @@ namespace MediaWPF
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, id_y);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, buffer_y);
-                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth, videoHeight, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth, videoHeight, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.Uniform1(textureUniformY, 0);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
 
@@ -260,7 +260,7 @@ namespace MediaWPF
                 GL.ActiveTexture(TextureUnit.Texture1);
                 GL.BindTexture(TextureTarget.Texture2D, id_u);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, buffer_u);
-                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth / 2, videoHeight / 2, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth / 2, videoHeight / 2, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.Uniform1(textureUniformU, 1);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
 
@@ -272,7 +272,7 @@ namespace MediaWPF
                 GL.ActiveTexture(TextureUnit.Texture2);
                 GL.BindTexture(TextureTarget.Texture2D, id_v);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, buffer_v);
-                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth / 2, videoHeight / 2, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth / 2, videoHeight / 2, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.Uniform1(textureUniformV, 2);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
             }
