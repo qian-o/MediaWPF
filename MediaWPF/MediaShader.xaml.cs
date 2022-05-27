@@ -36,7 +36,7 @@ namespace MediaWPF
 
         private readonly Stopwatch stopwatch = new();
 
-        private readonly string _path = @"E:\BaiduNetdiskDownload\LG 8K OLED  60FPS DEMO.webm";
+        private readonly string _path = @"C:\Users\13247\Downloads\FATE 4K144FPS.mp4";
         private Uri _uri;
         private LibVLC _lib;
         private Media _media;
@@ -84,7 +84,6 @@ namespace MediaWPF
                 };
                 _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
                 _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
-                _mediaplayer.Mute = true;
                 _mediaplayer.Play();
             }
         }
