@@ -103,7 +103,7 @@ namespace MediaWPF
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StreamDraw);
 
             string p = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Shaders");
-            _shader = new Shader(Path.Combine(p, "shader.vert"), Path.Combine(p, "shader.frag"));
+            _shader = new Shader(Path.Combine(p, "shader.vert"), Path.Combine(p, "rgb_709.frag"));
             _shader.Use();
 
             textureUniformY = GL.GetUniformLocation(_shader.Handle, "tex_y");
@@ -133,7 +133,7 @@ namespace MediaWPF
         {
             Debug.WriteLine(Marshal.PtrToStringAnsi(chroma));
             byte[] bytes = Encoding.ASCII.GetBytes("I420");
-            for (var i = 0; i < bytes.Length; i++)
+            for (int i = 0; i < bytes.Length; i++)
             {
                 Marshal.WriteByte(chroma, i, bytes[i]);
             }
