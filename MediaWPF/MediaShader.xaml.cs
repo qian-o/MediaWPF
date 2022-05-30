@@ -164,12 +164,12 @@ namespace MediaWPF
             videoWidth = (int)width;
             videoHeight = (int)height;
 
-            // YYYY UV
-            _buffer = new byte[width * height * 6 / 4];
+            // YYYYYYYY UUVV
+            _buffer = new byte[width * height * 12 / 8];
 
-            sizeY = _buffer.Length / 6 * 4;
-            sizeU = _buffer.Length / 6;
-            sizeV = _buffer.Length / 6;
+            sizeY = _buffer.Length / 12 * 8;
+            sizeU = _buffer.Length / 12 * 2;
+            sizeV = _buffer.Length / 12 * 2;
             indexY = 0;
             indexU = sizeY;
             indexV = sizeY + sizeU;
