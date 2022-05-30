@@ -44,6 +44,8 @@ namespace MediaWPF
         private int videoWidth;
         private int videoHeight;
         private byte[] _buffer;
+        private int indexY, indexU, indexV;
+        private int sizeY, sizeU, sizeV;
         private IntPtr planeY, planeU, planeV;
         private int id_y, id_u, id_v;
         private int buffer_y, buffer_u, buffer_v;
@@ -84,6 +86,7 @@ namespace MediaWPF
                 };
                 _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
                 _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
+                _mediaplayer.Mute = true;
                 _mediaplayer.Play();
             }
         }
@@ -135,6 +138,24 @@ namespace MediaWPF
                 Marshal.WriteByte(chroma, i, bytes[i]);
             }
 
+            if (_mediaplayer.Media is Media media)
+            {
+                foreach (MediaTrack track in media.Tracks)
+                {
+                    if (track.TrackType == TrackType.Video)
+                    {
+                        VideoTrack trackInfo = track.Data.Video;
+                        if (trackInfo.Width > 0 && trackInfo.Height > 0)
+                        {
+                            width = trackInfo.Width;
+                            height = trackInfo.Height;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
             int[] pitche = { (int)width, (int)width / 2, (int)width / 2 };
             int[] line = { (int)height, (int)height / 2, (int)height / 2 };
             Marshal.Copy(pitche, 0, pitches, pitche.Length);
@@ -143,12 +164,21 @@ namespace MediaWPF
             videoWidth = (int)width;
             videoHeight = (int)height;
 
-            _buffer = new byte[width * height * 12 / 8];
+            // YYYY UV
+            _buffer = new byte[width * height * 6 / 4];
+
+            sizeY = _buffer.Length / 6 * 4;
+            sizeU = _buffer.Length / 6;
+            sizeV = _buffer.Length / 6;
+            indexY = 0;
+            indexU = sizeY;
+            indexV = sizeY + sizeU;
+
             opaque = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, 0);
 
-            planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, 0);
-            planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, videoWidth * videoHeight);
-            planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, videoWidth * videoHeight + videoWidth * videoHeight / 4);
+            planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, indexY);
+            planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, indexU);
+            planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, indexV);
 
             // GLWpfControl控件外层嵌套Viewbox进行比例缩放，防止视频比例变形。
             // 但会影响渲染性能。
@@ -168,7 +198,7 @@ namespace MediaWPF
             return IntPtr.Zero;
         }
 
-        public  void DisplayVideo(IntPtr opaque, IntPtr picture)
+        public void DisplayVideo(IntPtr opaque, IntPtr picture)
         {
             stopwatch.Stop();
             Console.WriteLine($"当前帧耗时：{stopwatch.ElapsedMilliseconds}");
@@ -183,7 +213,7 @@ namespace MediaWPF
                 //Init Texture
                 id_y = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_y);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth, videoHeight, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, videoWidth, videoHeight, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -191,7 +221,7 @@ namespace MediaWPF
 
                 id_u = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_u);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -199,7 +229,7 @@ namespace MediaWPF
 
                 id_v = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_v);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -207,15 +237,15 @@ namespace MediaWPF
 
                 buffer_y = GL.GenBuffer();
                 GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_y);
-                GL.BufferData(BufferTarget.ArrayBuffer, videoWidth * videoHeight, IntPtr.Zero, BufferUsageHint.StreamCopy);
+                GL.BufferData(BufferTarget.ArrayBuffer, sizeY, IntPtr.Zero, BufferUsageHint.StreamCopy);
 
                 buffer_u = GL.GenBuffer();
                 GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_u);
-                GL.BufferData(BufferTarget.ArrayBuffer, videoWidth / 2 * videoHeight / 2, IntPtr.Zero, BufferUsageHint.StreamCopy);
+                GL.BufferData(BufferTarget.ArrayBuffer, sizeU, IntPtr.Zero, BufferUsageHint.StreamCopy);
 
                 buffer_v = GL.GenBuffer();
                 GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_v);
-                GL.BufferData(BufferTarget.ArrayBuffer, videoWidth / 2 * videoHeight / 2, IntPtr.Zero, BufferUsageHint.StreamCopy);
+                GL.BufferData(BufferTarget.ArrayBuffer, sizeV, IntPtr.Zero, BufferUsageHint.StreamCopy);
 
                 isInitTexture = true;
             }
@@ -223,7 +253,7 @@ namespace MediaWPF
             {
                 // Y
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, id_y);
-                GL.BufferSubData(BufferTarget.PixelPackBuffer, IntPtr.Zero, videoWidth * videoHeight, planeY);
+                GL.BufferSubData(BufferTarget.PixelPackBuffer, IntPtr.Zero, sizeY, planeY);
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
 
                 GL.ActiveTexture(TextureUnit.Texture0);
@@ -235,7 +265,7 @@ namespace MediaWPF
 
                 // U
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, id_u);
-                GL.BufferSubData(BufferTarget.PixelPackBuffer, IntPtr.Zero, videoWidth * videoHeight / 4, planeU);
+                GL.BufferSubData(BufferTarget.PixelPackBuffer, IntPtr.Zero, sizeU, planeU);
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
 
                 GL.ActiveTexture(TextureUnit.Texture1);
@@ -247,7 +277,7 @@ namespace MediaWPF
 
                 // V
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, id_v);
-                GL.BufferSubData(BufferTarget.PixelPackBuffer, IntPtr.Zero, videoWidth * videoHeight / 4, planeV);
+                GL.BufferSubData(BufferTarget.PixelPackBuffer, IntPtr.Zero, sizeV, planeV);
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
 
                 GL.ActiveTexture(TextureUnit.Texture2);
