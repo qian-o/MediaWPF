@@ -36,7 +36,7 @@ namespace MediaWPF
 
         private readonly Stopwatch stopwatch = new();
 
-        private readonly string _path = @"C:\Users\13247\Downloads\FATE 4K144FPS.mp4";
+        private readonly string _path = @"C:\Users\13247\Downloads\杜比视界\Sony_4K_Camp.mp4";
         private Uri _uri;
         private LibVLC _lib;
         private Media _media;
@@ -133,24 +133,6 @@ namespace MediaWPF
             for (var i = 0; i < bytes.Length; i++)
             {
                 Marshal.WriteByte(chroma, i, bytes[i]);
-            }
-
-            if (_mediaplayer.Media is Media media)
-            {
-                foreach (MediaTrack track in media.Tracks)
-                {
-                    if (track.TrackType == TrackType.Video)
-                    {
-                        VideoTrack trackInfo = track.Data.Video;
-                        if (trackInfo.Width > 0 && trackInfo.Height > 0)
-                        {
-                            width = trackInfo.Width;
-                            height = trackInfo.Height;
-                        }
-
-                        break;
-                    }
-                }
             }
 
             int[] pitche = { (int)width, (int)width / 2, (int)width / 2 };
