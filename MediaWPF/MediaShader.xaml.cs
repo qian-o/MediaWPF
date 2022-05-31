@@ -103,7 +103,7 @@ namespace MediaWPF
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StreamDraw);
 
             string p = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Shaders");
-            _shader = new Shader(Path.Combine(p, "shader.vert"), Path.Combine(p, "rgb_709.frag"));
+            _shader = new Shader(Path.Combine(p, "shader.vert"), Path.Combine(p, "shaderSDR.frag"));
             _shader.Use();
 
             textureUniformY = GL.GetUniformLocation(_shader.Handle, "tex_y");

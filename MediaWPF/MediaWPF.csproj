@@ -30,7 +30,7 @@
     <None Update="Lib\LibVLCSharp.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Shaders\rgb_709.frag">
+    <None Update="Shaders\shaderSDR.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Shaders\shader.vert">
