@@ -11,12 +11,13 @@ using System.Windows;
 using System.Windows.Controls;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
+
 namespace MediaWPF
 {
     /// <summary>
-    /// MediaShader.xaml 的交互逻辑
+    /// MediaShaderHDR.xaml 的交互逻辑
     /// </summary>
-    public partial class MediaShader : UserControl
+    public partial class MediaShaderHDR : UserControl
     {
         #region shader
         private readonly float[] _vertices =
@@ -50,7 +51,7 @@ namespace MediaWPF
         private int textureUniformY, textureUniformU, textureUniformV;
         private bool isInitTexture;
 
-        public MediaShader()
+        public MediaShaderHDR()
         {
             InitializeComponent();
 
