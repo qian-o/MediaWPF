@@ -35,6 +35,7 @@ namespace MediaWPF
         private Shader _shader;
         #endregion
 
+        private readonly Stopwatch stopwatch = new();
         private readonly string _path = @"E:\BaiduNetdiskDownload\[A]ddiction _2160p.mp4";
         private Uri _uri;
         private LibVLC _lib;
@@ -86,7 +87,8 @@ namespace MediaWPF
                         EnableHardwareDecoding = true
                     };
                     _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
-                    _mediaplayer.SetVideoCallbacks(LockVideo, null, null);
+                    _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
+                    _mediaplayer.Mute = true;
                     _mediaplayer.Play();
                 }
             }
@@ -199,6 +201,13 @@ namespace MediaWPF
             IntPtr[] datas = { planeY, planeU, planeV };
             Marshal.Copy(datas, 0, planes, datas.Length);
             return IntPtr.Zero;
+        }
+
+        public void DisplayVideo(IntPtr opaque, IntPtr picture)
+        {
+            stopwatch.Stop();
+            Console.WriteLine($"当前帧耗时：{stopwatch.ElapsedMilliseconds}");
+            stopwatch.Restart();
         }
         #endregion
 
