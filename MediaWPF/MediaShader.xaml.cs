@@ -43,8 +43,7 @@ namespace MediaWPF
         private MediaPlayer _mediaplayer;
         private int videoWidth;
         private int videoHeight;
-        private byte[] _buffer;
-        private int indexY, indexU, indexV;
+        private byte[] _bufferY, _bufferU, _bufferV;
         private int sizeY, sizeU, sizeV;
         private IntPtr planeY, planeU, planeV;
         private int id_y, id_u, id_v;
@@ -134,7 +133,8 @@ namespace MediaWPF
         #region VLC解码
         private uint VideoFormat(ref IntPtr opaque, IntPtr chroma, ref uint width, ref uint height, IntPtr pitches, IntPtr lines)
         {
-            Debug.WriteLine(Marshal.PtrToStringAnsi(chroma));
+            Console.WriteLine(Marshal.PtrToStringAnsi(chroma));
+
             byte[] bytes = Encoding.ASCII.GetBytes("I420");
             for (int i = 0; i < bytes.Length; i++)
             {
@@ -147,8 +147,8 @@ namespace MediaWPF
                 {
                     if (track.TrackType == TrackType.Video)
                     {
-                        Debug.WriteLine(Encoding.ASCII.GetString(BitConverter.GetBytes(track.OriginalFourcc)));
-                        Debug.WriteLine(Encoding.ASCII.GetString(BitConverter.GetBytes(track.Codec)));
+                        Console.WriteLine(Encoding.ASCII.GetString(BitConverter.GetBytes(track.OriginalFourcc)));
+                        Console.WriteLine(Encoding.ASCII.GetString(BitConverter.GetBytes(track.Codec)));
                         VideoTrack trackInfo = track.Data.Video;
                         if (trackInfo.Width > 0 && trackInfo.Height > 0)
                         {
@@ -163,27 +163,24 @@ namespace MediaWPF
 
             int[] pitche = { (int)width, (int)width / 2, (int)width / 2 };
             int[] line = { (int)height, (int)height / 2, (int)height / 2 };
+
             Marshal.Copy(pitche, 0, pitches, pitche.Length);
             Marshal.Copy(line, 0, lines, pitche.Length);
 
             videoWidth = (int)width;
             videoHeight = (int)height;
 
-            // YYYYYYYY UUVV
-            _buffer = new byte[width * height * 12 / 8];
+            _bufferY = new byte[(int)width * (int)height];
+            _bufferU = new byte[(int)width / 2 * (int)height / 2];
+            _bufferV = new byte[(int)width / 2 * (int)height / 2];
 
-            sizeY = _buffer.Length / 12 * 8;
-            sizeU = _buffer.Length / 12 * 2;
-            sizeV = _buffer.Length / 12 * 2;
-            indexY = 0;
-            indexU = sizeY;
-            indexV = sizeY + sizeU;
+            sizeY = _bufferY.Length;
+            sizeU = _bufferU.Length;
+            sizeV = _bufferV.Length;
 
-            opaque = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, 0);
-
-            planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, indexY);
-            planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, indexU);
-            planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_buffer, indexV);
+            planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
+            planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferU, 0);
+            planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferV, 0);
 
             // GLWpfControl控件外层嵌套Viewbox进行比例缩放，防止视频比例变形。
             // 但会影响渲染性能。
@@ -213,9 +210,8 @@ namespace MediaWPF
 
         private void Display()
         {
-            if (!isInitTexture && _buffer != null)
+            if (!isInitTexture && _bufferY != null && _bufferU != null && _bufferV != null)
             {
-                //Init Texture
                 id_y = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_y);
                 GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, videoWidth, videoHeight, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
