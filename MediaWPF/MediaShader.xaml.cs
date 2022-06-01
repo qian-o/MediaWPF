@@ -141,6 +141,17 @@ namespace MediaWPF
                 Marshal.WriteByte(chroma, i, bytes[i]);
             }
 
+            videoWidth = (int)width;
+            videoHeight = (int)height;
+
+            // GLWpfControl控件外层嵌套Viewbox进行比例缩放，防止视频比例变形。
+            // 但会影响渲染性能。
+            Dispatcher.Invoke(delegate
+            {
+                glMedia.Width = videoWidth;
+                glMedia.Height = videoHeight;
+            });
+
             if (_mediaplayer.Media is Media media)
             {
                 foreach (MediaTrack track in media.Tracks)
@@ -167,9 +178,6 @@ namespace MediaWPF
             Marshal.Copy(pitche, 0, pitches, pitche.Length);
             Marshal.Copy(line, 0, lines, pitche.Length);
 
-            videoWidth = (int)width;
-            videoHeight = (int)height;
-
             _bufferY = new byte[(int)width * (int)height];
             _bufferU = new byte[(int)width / 2 * (int)height / 2];
             _bufferV = new byte[(int)width / 2 * (int)height / 2];
@@ -181,14 +189,6 @@ namespace MediaWPF
             planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
             planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferU, 0);
             planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferV, 0);
-
-            // GLWpfControl控件外层嵌套Viewbox进行比例缩放，防止视频比例变形。
-            // 但会影响渲染性能。
-            Dispatcher.Invoke(delegate
-            {
-                glMedia.Width = videoWidth;
-                glMedia.Height = videoHeight;
-            });
 
             return 1;
         }
