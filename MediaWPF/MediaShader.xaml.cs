@@ -3,6 +3,7 @@ using MediaWPF.Shaders;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Wpf;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -60,31 +61,34 @@ namespace MediaWPF
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(_path))
+            if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                DependencyObject dependencyObject = LogicalTreeHelper.GetParent(this);
-                while (dependencyObject != null)
+                if (File.Exists(_path))
                 {
-                    if (dependencyObject is MainWindow mainWindow)
+                    DependencyObject dependencyObject = LogicalTreeHelper.GetParent(this);
+                    while (dependencyObject != null)
                     {
-                        mainWindow.Title = new FileInfo(_path).Name;
-                        break;
+                        if (dependencyObject is MainWindow mainWindow)
+                        {
+                            mainWindow.Title = new FileInfo(_path).Name;
+                            break;
+                        }
+                        else
+                        {
+                            dependencyObject = LogicalTreeHelper.GetParent(dependencyObject);
+                        }
                     }
-                    else
+                    _uri = new(_path);
+                    _lib = new();
+                    _media = new(_lib, _uri, new string[] { "input-repeat=65535" });
+                    _mediaplayer = new(_media)
                     {
-                        dependencyObject = LogicalTreeHelper.GetParent(dependencyObject);
-                    }
+                        EnableHardwareDecoding = true
+                    };
+                    _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
+                    _mediaplayer.SetVideoCallbacks(LockVideo, null, null);
+                    _mediaplayer.Play();
                 }
-                _uri = new(_path);
-                _lib = new();
-                _media = new(_lib, _uri, new string[] { "input-repeat=65535" });
-                _mediaplayer = new(_media)
-                {
-                    EnableHardwareDecoding = true
-                };
-                _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
-                _mediaplayer.SetVideoCallbacks(LockVideo, null, null);
-                _mediaplayer.Play();
             }
         }
 
@@ -205,7 +209,7 @@ namespace MediaWPF
                 //Init Texture
                 id_y = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_y);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth, videoHeight, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, videoWidth, videoHeight, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -213,7 +217,7 @@ namespace MediaWPF
 
                 id_u = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_u);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -221,7 +225,7 @@ namespace MediaWPF
 
                 id_v = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id_v);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, videoWidth / 2, videoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
