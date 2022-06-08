@@ -37,7 +37,7 @@ namespace MediaWPF
         #endregion
 
         private readonly Stopwatch stopwatch = new();
-        private readonly string _path = @"E:\BaiduNetdiskDownload\[A]ddiction _2160p_HDR_Extreme.mp4";
+        private readonly string _path = @"D:\BaiduNetdiskDownload\[A]ddiction _2160p_HDR_Extreme.mp4";
         private Uri _uri;
         private LibVLC _lib;
         private Media _media;
@@ -127,7 +127,7 @@ namespace MediaWPF
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             GL.BindVertexArray(_vertexArrayObject);
-            // Display();
+            Display();
             GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
         }
 
@@ -163,7 +163,7 @@ namespace MediaWPF
             }
 
             int[] pitche = { (int)width * 2, (int)width, (int)width };
-            int[] line = { (int)height * 2, (int)height, (int)height };
+            int[] line = { (int)height, (int)height / 2, (int)height / 2};
 
             Marshal.Copy(pitche, 0, pitches, pitche.Length);
             Marshal.Copy(line, 0, lines, pitche.Length);
@@ -172,8 +172,8 @@ namespace MediaWPF
             videoHeight = (int)height;
 
             _bufferY = new byte[(int)width * (int)height * 2];
-            _bufferU = new byte[(int)width * (int)height * 2];
-            _bufferV = new byte[(int)width * (int)height * 2];
+            _bufferU = new byte[(int)width * (int)height / 2];
+            _bufferV = new byte[(int)width * (int)height / 2];
 
             sizeY = _bufferY.Length;
             sizeU = _bufferU.Length;
@@ -200,7 +200,6 @@ namespace MediaWPF
             Marshal.Copy(datas, 0, planes, datas.Length);
             return IntPtr.Zero;
         }
-
         public void DisplayVideo(IntPtr opaque, IntPtr picture)
         {
             stopwatch.Stop();
