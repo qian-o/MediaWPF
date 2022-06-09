@@ -38,7 +38,7 @@ namespace MediaWPF
         #endregion
 
         private readonly Stopwatch stopwatch = new();
-        private readonly string _path = @"E:\BaiduNetdiskDownload\[A]ddiction _2160p_HDR_Extreme.mp4";
+        private readonly string _path = @"D:\BaiduNetdiskDownload\[A]ddiction _2160p_HDR_Extreme.mp4";
         private Uri _uri;
         private LibVLC _lib;
         private Media _media;
@@ -213,12 +213,12 @@ namespace MediaWPF
             //int Y, U, V, R, G, B;
             //int u_width;
             //u_width = videoWidth >> 1;
-            //Bitmap bitmap = new(videoWidth, videoHeight);
+            //using Bitmap bitmap = new(videoWidth, videoHeight);
             //for (int i = 0; i < videoHeight; i++)
             //{
             //    for (int j = 0; j < videoWidth; j++)
             //    {
-            //        Y = _bufferY[videoWidth * i + j];
+            //        Y = _bufferY[videoWidth * i + j] / 4;
             //        int offSet = (i >> 1) * u_width + (j >> 1);
             //        U = _bufferU[offSet] / 4;
             //        V = _bufferV[offSet] / 4;

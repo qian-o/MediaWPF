@@ -17,8 +17,13 @@ const mat4 YUV_TO_RGB_MATRIX = mat4(
 void main()
 {
     vec3 yuv;
-    yuv.x = texture2D(tex_y, texCoord).x;
-    yuv.y = texture2D(tex_u, texCoord).x;
-    yuv.z = texture2D(tex_v, texCoord).x;
-    outputColor = vec4(yuv, 1.0) * YUV_TO_RGB_MATRIX;
+    vec3 rgb; 
+    yuv.x = texture(tex_y, texCoord).x * 56636 / 4;
+    yuv.y = texture(tex_u, texCoord).x * 56636 / 4;
+    yuv.z = texture(tex_v, texCoord).x * 56636 / 4;
+    rgb.x = yuv.x + 1.4746 * (yuv.z - 128);
+    rgb.y = yuv.x - (0.1645 * (yuv.y - 128) - 0.5713 * (yuv.z - 128));
+    rgb.z = yuv.x + (1.881 * (yuv.y - 128));
+    rgb = rgb / 256;
+    outputColor = vec4(rgb, 1.0);
 }
