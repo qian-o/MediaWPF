@@ -38,7 +38,7 @@ namespace MediaWPF
         #endregion
 
         private readonly Stopwatch stopwatch = new();
-        private readonly string _path = @"D:\BaiduNetdiskDownload\[A]ddiction _2160p_HDR_Extreme.mp4";
+        private readonly string _path = @"C:\Users\13247\Downloads\杜比视界\Sony_4K_HDR_Camp.mp4";
         private Uri _uri;
         private LibVLC _lib;
         private Media _media;
@@ -53,7 +53,7 @@ namespace MediaWPF
         private int textureUniformY, textureUniformU, textureUniformV;
         private bool isInitTexture;
 
-        private int sum = 0;
+        // private int sum = 0;
 
         public MediaShaderHDR()
         {
@@ -178,9 +178,9 @@ namespace MediaWPF
             _bufferU = new ushort[(int)width * (int)height / 4];
             _bufferV = new ushort[(int)width * (int)height / 4];
 
-            sizeY = _bufferY.Length;
-            sizeU = _bufferU.Length;
-            sizeV = _bufferV.Length;
+            sizeY = _bufferY.Length * 2;
+            sizeU = _bufferU.Length * 2;
+            sizeV = _bufferV.Length * 2;
 
             planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
             planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferU, 0);
@@ -261,33 +261,63 @@ namespace MediaWPF
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
+                buffer_y = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_y);
+                GL.BufferData(BufferTarget.ArrayBuffer, sizeY, IntPtr.Zero, BufferUsageHint.StreamCopy);
+
+                buffer_u = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_u);
+                GL.BufferData(BufferTarget.ArrayBuffer, sizeU, IntPtr.Zero, BufferUsageHint.StreamCopy);
+
+                buffer_v = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_v);
+                GL.BufferData(BufferTarget.ArrayBuffer, sizeV, IntPtr.Zero, BufferUsageHint.StreamCopy);
+
                 isInitTexture = true;
             }
             if (isInitTexture)
             {
                 // Y
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, id_y);
+                GL.BufferSubData(BufferTarget.PixelPackBuffer, IntPtr.Zero, sizeY, planeY);
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, id_y);
-                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth, videoHeight, PixelFormat.Red, PixelType.UnsignedShort, planeY);
+                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, buffer_y);
+                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth, videoHeight, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.Uniform1(textureUniformY, 0);
+                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
 
                 // U
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, id_u);
+                GL.BufferSubData(BufferTarget.PixelPackBuffer, IntPtr.Zero, sizeU, planeU);
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
                 GL.ActiveTexture(TextureUnit.Texture1);
                 GL.BindTexture(TextureTarget.Texture2D, id_u);
-                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth / 2, videoHeight / 2, PixelFormat.Red, PixelType.UnsignedShort, planeU);
+                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, buffer_u);
+                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth / 2, videoHeight / 2, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.Uniform1(textureUniformU, 1);
+                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
 
                 // V
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, id_v);
+                GL.BufferSubData(BufferTarget.PixelPackBuffer, IntPtr.Zero, sizeV, planeV);
+                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
                 GL.ActiveTexture(TextureUnit.Texture2);
                 GL.BindTexture(TextureTarget.Texture2D, id_v);
-                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth / 2, videoHeight / 2, PixelFormat.Red, PixelType.UnsignedShort, planeV);
+                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, buffer_v);
+                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth / 2, videoHeight / 2, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.Uniform1(textureUniformV, 2);
+                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
             }
         }
 
-        private int CONVERT_ADJUST(double tmp)
-        {
-            return Convert.ToInt32((tmp >= 0 && tmp <= 255) ? tmp : (tmp < 0 ? 0 : 255));
-        }
+        //private int CONVERT_ADJUST(double tmp)
+        //{
+        //    return Convert.ToInt32((tmp >= 0 && tmp <= 255) ? tmp : (tmp < 0 ? 0 : 255));
+        //}
     }
 }
