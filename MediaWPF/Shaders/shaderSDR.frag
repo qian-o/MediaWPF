@@ -9,16 +9,16 @@ uniform sampler2D tex_u;
 uniform sampler2D tex_v;
 
 const mat4 YUV_TO_RGB_MATRIX = mat4(
-    1.1643835616, 0, 1.7927410714, -0.9729450750,
-    1.1643835616, -0.2132486143, -0.5329093286, 0.3014826655,
-    1.1643835616, 2.1124017857, 0, -1.1334022179,
-    0, 0, 0, 1);
+    1.164384f, -0.000000f,  1.792741f, -0.972945f,
+    1.164384f, -0.213249f, -0.532909f,  0.301483f,
+    1.164384f,  2.112402f, -0.000000f, -1.133402f,
+    0.000000f,  0.000000f,  0.000000f,  1.000000f);
 
 void main()
 {
     vec3 yuv;
-    yuv.x = texture2D(tex_y, texCoord).x;
-    yuv.y = texture2D(tex_u, texCoord).x;
-    yuv.z = texture2D(tex_v, texCoord).x;
+    yuv.x = texture(tex_y, texCoord).x;
+    yuv.y = texture(tex_u, texCoord).x;
+    yuv.z = texture(tex_v, texCoord).x;
     outputColor = vec4(yuv, 1.0) * YUV_TO_RGB_MATRIX;
 }
