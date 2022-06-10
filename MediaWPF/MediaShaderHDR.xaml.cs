@@ -52,8 +52,6 @@ namespace MediaWPF
         private int textureUniformY, textureUniformU, textureUniformV;
         private bool isInitTexture;
 
-        // private int sum = 0;
-
         public MediaShaderHDR()
         {
             InitializeComponent();
@@ -217,27 +215,6 @@ namespace MediaWPF
             stopwatch.Stop();
             Console.WriteLine($"当前帧耗时：{stopwatch.ElapsedMilliseconds}");
             stopwatch.Restart();
-
-            //int Y, U, V, R, G, B;
-            //int u_width;
-            //u_width = videoWidth >> 1;
-            //using Bitmap bitmap = new(videoWidth, videoHeight);
-            //for (int i = 0; i < videoHeight; i++)
-            //{
-            //    for (int j = 0; j < videoWidth; j++)
-            //    {
-            //        Y = _bufferY[videoWidth * i + j] / 4;
-            //        int offSet = (i >> 1) * u_width + (j >> 1);
-            //        U = _bufferU[offSet] / 4;
-            //        V = _bufferV[offSet] / 4;
-            //        R = CONVERT_ADJUST(Y + (1.4746 * (V - 128)));
-            //        G = CONVERT_ADJUST(Y - (0.1645 * (U - 128) - 0.5713 * (V - 128)));
-            //        B = CONVERT_ADJUST(Y + (1.881 * (U - 128)));
-
-            //        bitmap.SetPixel(j, i, Color.FromArgb(255, R, G, B));
-            //    }
-            //}
-            //bitmap.Save($"{sum++}.bmp");
         }
         #endregion
 
@@ -322,10 +299,5 @@ namespace MediaWPF
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
             }
         }
-
-        //private int CONVERT_ADJUST(double tmp)
-        //{
-        //    return Convert.ToInt32((tmp >= 0 && tmp <= 255) ? tmp : (tmp < 0 ? 0 : 255));
-        //}
     }
 }
