@@ -5,7 +5,6 @@ using OpenTK.Wpf;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,7 +37,7 @@ namespace MediaWPF
         #endregion
 
         private readonly Stopwatch stopwatch = new();
-        private readonly string _path = @"C:\Users\13247\Downloads\杜比视界\Sony_4K_HDR_Camp.mp4";
+        private readonly string _path;
         private Uri _uri;
         private LibVLC _lib;
         private Media _media;
@@ -59,6 +58,15 @@ namespace MediaWPF
         {
             InitializeComponent();
 
+            GLWpfControlSettings gLWpfControlSettings = new();
+            glMedia.Start(gLWpfControlSettings);
+        }
+
+        public MediaShaderHDR(string path)
+        {
+            InitializeComponent();
+
+            _path = path;
             GLWpfControlSettings gLWpfControlSettings = new();
             glMedia.Start(gLWpfControlSettings);
         }
