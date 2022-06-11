@@ -7,8 +7,8 @@ in vec2 texCoord;
 uniform sampler2D tex_y;
 uniform sampler2D tex_u;
 uniform sampler2D tex_v;
-uniform int brightness;
-uniform int contrast;
+uniform int brightness = 25;
+uniform int contrast = 100;
 
 const mat4 YUV_TO_RGB_MATRIX = mat4(
     1.167808f * 64, -0.000000f * 64,  1.683611f * 64, -0.915688f,
@@ -20,11 +20,12 @@ const float PI = 3.1415926;
 
 vec4 adjust(vec3 color)
 {
-	float B = brightness / 255.0;
+	float b = brightness / 255.0;
 	float c = contrast / 255.0;
 	float k = tan((45 + 44 * c) / 180.0 * PI);
 
-	color = ((color * 255.0 - 127.5 * (1.0 - B)) * k + 127.5 * (1.0 + B)) / 255.0;
+	color = ((color * 255.0 - 127.5 * (1.0 - b)) * k + 127.5 * (1.0 + b)) / 255.0;
+
     return vec4(color, 1.0);
 }
 

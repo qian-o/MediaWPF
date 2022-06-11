@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 
@@ -50,7 +51,6 @@ namespace MediaWPF
         private int id_y, id_u, id_v;
         private int buffer_y, buffer_u, buffer_v;
         private int textureUniformY, textureUniformU, textureUniformV;
-
         private bool isInitTexture;
 
         public MediaShaderHDR()
@@ -144,13 +144,31 @@ namespace MediaWPF
         // 亮度
         private void SliBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            _shader.SetInt("brightness", Convert.ToInt32(sliBrightness.Value));
+            if (_shader != null)
+            {
+                _shader.SetInt("brightness", Convert.ToInt32(sliBrightness.Value));
+            }
         }
 
         // 对比度
         private void SliContrast_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            _shader.SetInt("contrast", Convert.ToInt32(sliContrast.Value));
+            if (_shader != null)
+            {
+                _shader.SetInt("contrast", Convert.ToInt32(sliContrast.Value));
+            }
+        }
+
+        private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_mediaplayer.IsPlaying)
+            {
+                _mediaplayer.Pause();
+            }
+            else
+            {
+                _mediaplayer.Play();
+            }
         }
 
         #region VLC解码
