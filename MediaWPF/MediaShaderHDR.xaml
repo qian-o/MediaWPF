@@ -6,9 +6,18 @@
              xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+    <UserControl.CacheMode>
+        <BitmapCache/>
+    </UserControl.CacheMode>
     <Grid Background="#000000">
         <Viewbox>
             <glWpfControl:GLWpfControl x:Name="glMedia" Loaded="GlMedia_Loaded" Render="GlMedia_Render"/>
         </Viewbox>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <TextBlock HorizontalAlignment="Left" FontSize="20" Foreground="Aquamarine" Text="亮度："/>
+            <Slider x:Name="sliBrightness" Width="200" Minimum="0" Maximum="100" ValueChanged="SliBrightness_ValueChanged"/>
+            <TextBlock HorizontalAlignment="Left" FontSize="20" Foreground="Aquamarine" Text="对比度："/>
+            <Slider x:Name="sliContrast" Width="200" Minimum="0" Maximum="100" ValueChanged="SliContrast_ValueChanged"/>
+        </StackPanel>
     </Grid>
 </UserControl>

@@ -50,6 +50,7 @@ namespace MediaWPF
         private int id_y, id_u, id_v;
         private int buffer_y, buffer_u, buffer_v;
         private int textureUniformY, textureUniformU, textureUniformV;
+
         private bool isInitTexture;
 
         public MediaShaderHDR()
@@ -138,6 +139,18 @@ namespace MediaWPF
             GL.BindVertexArray(_vertexArrayObject);
             Display();
             GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
+        }
+
+        // 亮度
+        private void SliBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _shader.SetInt("brightness", Convert.ToInt32(sliBrightness.Value));
+        }
+
+        // 对比度
+        private void SliContrast_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _shader.SetInt("contrast", Convert.ToInt32(sliContrast.Value));
         }
 
         #region VLC解码
