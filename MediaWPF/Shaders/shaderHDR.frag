@@ -8,7 +8,7 @@ uniform sampler2D tex_y;
 uniform sampler2D tex_u;
 uniform sampler2D tex_v;
 uniform int brightness = 25;
-uniform int contrast = 100;
+uniform int contrast = 80;
 
 const mat4 YUV_TO_RGB_MATRIX = mat4(
     1.167808f * 64, -0.000000f * 64,  1.683611f * 64, -0.915688f,

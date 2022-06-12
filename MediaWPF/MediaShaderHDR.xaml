@@ -15,9 +15,9 @@
         </Viewbox>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
             <TextBlock HorizontalAlignment="Left" FontSize="20" Foreground="Aquamarine" Text="亮度："/>
-            <Slider x:Name="sliBrightness" Width="200" Minimum="0" Maximum="100" Value="25" ValueChanged="SliBrightness_ValueChanged"/>
+            <Slider x:Name="sliBrightness" Width="200" Minimum="0" Maximum="100" Value="20" ValueChanged="SliBrightness_ValueChanged"/>
             <TextBlock HorizontalAlignment="Left" Margin="0,10,0,0" FontSize="20" Foreground="Aquamarine" Text="对比度："/>
-            <Slider x:Name="sliContrast" Width="200" Minimum="0" Maximum="100" Value="100" ValueChanged="SliContrast_ValueChanged"/>
+            <Slider x:Name="sliContrast" Width="200" Minimum="0" Maximum="100" Value="80" ValueChanged="SliContrast_ValueChanged"/>
         </StackPanel>
     </Grid>
 </UserControl>
