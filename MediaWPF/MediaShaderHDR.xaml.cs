@@ -74,7 +74,7 @@ namespace MediaWPF
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                if (File.Exists(_path))
+                if (!string.IsNullOrEmpty(_path))
                 {
                     DependencyObject dependencyObject = LogicalTreeHelper.GetParent(this);
                     while (dependencyObject != null)

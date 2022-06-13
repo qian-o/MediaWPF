@@ -71,7 +71,7 @@ namespace MediaWPF
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                if (File.Exists(_path))
+                if (!string.IsNullOrEmpty(_path))
                 {
                     DependencyObject dependencyObject = LogicalTreeHelper.GetParent(this);
                     while (dependencyObject != null)
@@ -95,7 +95,6 @@ namespace MediaWPF
                     };
                     _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
                     _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
-                    _mediaplayer.Mute = true;
                     _mediaplayer.Play();
                 }
             }
