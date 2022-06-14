@@ -9,7 +9,7 @@
     <UserControl.CacheMode>
         <BitmapCache/>
     </UserControl.CacheMode>
-    <Grid Background="#000000">
+    <Grid Background="#000000" MouseLeftButtonUp="Grid_MouseLeftButtonUp">
         <Viewbox>
             <glWpfControl:GLWpfControl x:Name="glMedia" Loaded="GlMedia_Loaded" Render="GlMedia_Render"/>
         </Viewbox>

@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace MediaWPF
@@ -135,6 +136,18 @@ namespace MediaWPF
             GL.BindVertexArray(_vertexArrayObject);
             Display();
             GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
+        }
+
+        private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_mediaplayer.IsPlaying)
+            {
+                _mediaplayer.Pause();
+            }
+            else
+            {
+                _mediaplayer.Play();
+            }
         }
 
         #region VLC解码
