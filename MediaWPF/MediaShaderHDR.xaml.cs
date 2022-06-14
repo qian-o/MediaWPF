@@ -182,6 +182,24 @@ namespace MediaWPF
                 Marshal.WriteByte(chroma, i, bytes[i]);
             }
 
+            int[] pitche = { (int)width * 2, (int)width, (int)width };
+            int[] line = { (int)height, (int)height / 2, (int)height / 2 };
+
+            Marshal.Copy(pitche, 0, pitches, pitche.Length);
+            Marshal.Copy(line, 0, lines, pitche.Length);
+
+            _bufferY = new ushort[(int)width * (int)height];
+            _bufferU = new ushort[(int)width * (int)height / 4];
+            _bufferV = new ushort[(int)width * (int)height / 4];
+
+            sizeY = _bufferY.Length * 2;
+            sizeU = _bufferU.Length * 2;
+            sizeV = _bufferV.Length * 2;
+
+            planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
+            planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferU, 0);
+            planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferV, 0);
+
             if (_mediaplayer.Media is Media media)
             {
                 foreach (MediaTrack track in media.Tracks)
@@ -202,26 +220,8 @@ namespace MediaWPF
                 }
             }
 
-            int[] pitche = { (int)width * 2, (int)width, (int)width };
-            int[] line = { (int)height, (int)height / 2, (int)height / 2 };
-
-            Marshal.Copy(pitche, 0, pitches, pitche.Length);
-            Marshal.Copy(line, 0, lines, pitche.Length);
-
             videoWidth = (int)width;
             videoHeight = (int)height;
-
-            _bufferY = new ushort[(int)width * (int)height];
-            _bufferU = new ushort[(int)width * (int)height / 4];
-            _bufferV = new ushort[(int)width * (int)height / 4];
-
-            sizeY = _bufferY.Length * 2;
-            sizeU = _bufferU.Length * 2;
-            sizeV = _bufferV.Length * 2;
-
-            planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
-            planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferU, 0);
-            planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferV, 0);
 
             // GLWpfControl控件外层嵌套Viewbox进行比例缩放，防止视频比例变形。
             // 但会影响渲染性能。

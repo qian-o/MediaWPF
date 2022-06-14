@@ -96,6 +96,7 @@ namespace MediaWPF
                     };
                     _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
                     _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
+                    _mediaplayer.Mute = true;
                     _mediaplayer.Play();
                 }
             }
@@ -161,16 +162,23 @@ namespace MediaWPF
                 Marshal.WriteByte(chroma, i, bytes[i]);
             }
 
-            videoWidth = (int)width;
-            videoHeight = (int)height;
+            int[] pitche = { (int)width, (int)width / 2, (int)width / 2 };
+            int[] line = { (int)height, (int)height / 2, (int)height / 2 };
 
-            // GLWpfControl控件外层嵌套Viewbox进行比例缩放，防止视频比例变形。
-            // 但会影响渲染性能。
-            Dispatcher.Invoke(delegate
-            {
-                glMedia.Width = videoWidth;
-                glMedia.Height = videoHeight;
-            });
+            Marshal.Copy(pitche, 0, pitches, pitche.Length);
+            Marshal.Copy(line, 0, lines, pitche.Length);
+
+            _bufferY = new byte[(int)width * (int)height];
+            _bufferU = new byte[(int)width / 2 * (int)height / 2];
+            _bufferV = new byte[(int)width / 2 * (int)height / 2];
+
+            sizeY = _bufferY.Length;
+            sizeU = _bufferU.Length;
+            sizeV = _bufferV.Length;
+
+            planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
+            planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferU, 0);
+            planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferV, 0);
 
             if (_mediaplayer.Media is Media media)
             {
@@ -192,23 +200,16 @@ namespace MediaWPF
                 }
             }
 
-            int[] pitche = { (int)width, (int)width / 2, (int)width / 2 };
-            int[] line = { (int)height, (int)height / 2, (int)height / 2 };
+            videoWidth = (int)width;
+            videoHeight = (int)height;
 
-            Marshal.Copy(pitche, 0, pitches, pitche.Length);
-            Marshal.Copy(line, 0, lines, pitche.Length);
-
-            _bufferY = new byte[(int)width * (int)height];
-            _bufferU = new byte[(int)width / 2 * (int)height / 2];
-            _bufferV = new byte[(int)width / 2 * (int)height / 2];
-
-            sizeY = _bufferY.Length;
-            sizeU = _bufferU.Length;
-            sizeV = _bufferV.Length;
-
-            planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
-            planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferU, 0);
-            planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferV, 0);
+            // GLWpfControl控件外层嵌套Viewbox进行比例缩放，防止视频比例变形。
+            // 但会影响渲染性能。
+            Dispatcher.Invoke(delegate
+            {
+                glMedia.Width = videoWidth;
+                glMedia.Height = videoHeight;
+            });
 
             return 1;
         }
@@ -283,6 +284,7 @@ namespace MediaWPF
                 GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth, videoHeight, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.Uniform1(textureUniformY, 0);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+                ErrorCode errorCode = GL.GetError();
 
                 // U
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, id_u);
