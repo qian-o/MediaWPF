@@ -36,7 +36,7 @@ namespace MediaWPF
         private Shader _shader;
         #endregion
 
-        private readonly Stopwatch stopwatch = new();
+        private readonly Stopwatch stopWatch = new();
         private readonly string _path;
         private Uri _uri;
         private LibVLC _lib;
@@ -223,9 +223,9 @@ namespace MediaWPF
 
         public void DisplayVideo(IntPtr opaque, IntPtr picture)
         {
-            stopwatch.Stop();
-            Console.WriteLine($"当前帧耗时：{stopwatch.ElapsedMilliseconds}");
-            stopwatch.Restart();
+            stopWatch.Stop();
+            Console.WriteLine($"当前帧耗时：{stopWatch.ElapsedMilliseconds}");
+            stopWatch.Restart();
         }
         #endregion
 
@@ -284,7 +284,6 @@ namespace MediaWPF
                 GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, videoWidth, videoHeight, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.Uniform1(textureUniformY, 0);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
-                ErrorCode errorCode = GL.GetError();
 
                 // U
                 GL.BindBuffer(BufferTarget.PixelPackBuffer, id_u);
