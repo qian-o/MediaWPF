@@ -8,7 +8,7 @@
         Title="MainWindow" Height="720" Width="1280" Loaded="Window_Loaded">
     <Grid x:Name="grdMain">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBox x:Name="txtFile" Height="40" MinWidth="300" FontSize="30" Text="C:\Users\13247\Downloads\杜比视界\Sony_4K_Camp.mp4"/>
+            <TextBox x:Name="txtFile" Height="40" MinWidth="300" FontSize="30" Text="C:\Users\13247\Downloads\杜比视界\Sony_4K_HDR_Camp.mp4"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
                 <Button Margin="10,0,10,0" Content="SDR" Click="BtnPlay_Click"/>
                 <Button Margin="10,0,10,0" Content="HDR" Click="BtnPlay_Click"/>
