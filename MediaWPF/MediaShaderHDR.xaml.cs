@@ -159,6 +159,15 @@ namespace MediaWPF
             }
         }
 
+        // 曝光度
+        private void SliExposure_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_shader != null)
+            {
+                _shader.SetInt("exposure", Convert.ToInt32(sliExposure.Value));
+            }
+        }
+
         private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (_mediaplayer.IsPlaying)
