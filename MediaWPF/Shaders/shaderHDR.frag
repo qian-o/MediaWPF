@@ -7,9 +7,6 @@ in vec2 texCoord;
 uniform sampler2D tex_y;
 uniform sampler2D tex_u;
 uniform sampler2D tex_v;
-uniform int brightness;
-uniform int contrast = 100;
-uniform int exposure;
 
 const mat4 YUV_TO_RGB_MATRIX = mat4(
     1.167808f * 64, -0.000000f * 64,  1.683611f * 64, -0.915688f,
@@ -18,26 +15,9 @@ const mat4 YUV_TO_RGB_MATRIX = mat4(
     0.000000f * 64,  0.000000f * 64,  0.000000f * 64,  1.000000f);
 
 const mat3 BT2020_BT709 = mat3(
-        1.6605, -0.5876, -0.0728,
-		-0.1246,  1.1329, -0.0083,
-		-0.0182, -0.1006,  1.1187
-);
-
-const float PI = 3.1415926;
-
-vec4 adjust(vec3 color)
-{
-	float b = brightness / 100.0;
-    color = color + vec3(b);
-
-    float c = contrast / 100.0;
-    color = (color - vec3(0.5)) * c + vec3(0.5);
-
-    float e = exposure / 100.0;
-    color = color * pow(2.0, e);
-
-    return vec4(color, 1.0);
-}
+     1.6605, -0.5876, -0.0728,
+    -0.1246,  1.1329, -0.0083,
+    -0.0182, -0.1006,  1.1187);
 
 void main()
 {
@@ -46,5 +26,5 @@ void main()
     yuv.y = texture(tex_u, texCoord).x;
     yuv.z = texture(tex_v, texCoord).x;
     vec3 rgb = (vec4(yuv, 1.0) * YUV_TO_RGB_MATRIX).xyz * BT2020_BT709;
-    outputColor = adjust(rgb);
+    outputColor = vec4(rgb, 1);
 }

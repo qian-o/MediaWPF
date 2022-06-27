@@ -59,6 +59,7 @@ namespace MediaWPF
             GLWpfControlSettings gLWpfControlSettings = new();
             glMedia.Start(gLWpfControlSettings);
         }
+
         public MediaShader(string path)
         {
             InitializeComponent();

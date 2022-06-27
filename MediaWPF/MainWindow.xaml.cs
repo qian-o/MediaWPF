@@ -22,7 +22,8 @@ namespace MediaWPF
         {
             Button button = sender as Button;
             UserControl media = button.Content.ToString() == "SDR" ? new MediaShader(txtFile.Text) : new MediaShaderHDR(txtFile.Text);
-            grdMain.Children.Add(media);
+            media.Margin = new Thickness(5);
+            ungVideo.Children.Add(media);
         }
     }
 }

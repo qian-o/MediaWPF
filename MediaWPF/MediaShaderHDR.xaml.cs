@@ -141,33 +141,6 @@ namespace MediaWPF
             GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
         }
 
-        // 亮度
-        private void SliBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (_shader != null)
-            {
-                _shader.SetInt("brightness", Convert.ToInt32(sliBrightness.Value));
-            }
-        }
-
-        // 对比度
-        private void SliContrast_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (_shader != null)
-            {
-                _shader.SetInt("contrast", Convert.ToInt32(sliContrast.Value));
-            }
-        }
-
-        // 曝光度
-        private void SliExposure_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (_shader != null)
-            {
-                _shader.SetInt("exposure", Convert.ToInt32(sliExposure.Value));
-            }
-        }
-
         private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (_mediaplayer.IsPlaying)
