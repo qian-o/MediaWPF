@@ -75,19 +75,6 @@ namespace MediaWPF
             {
                 if (!string.IsNullOrEmpty(_path))
                 {
-                    DependencyObject dependencyObject = LogicalTreeHelper.GetParent(this);
-                    while (dependencyObject != null)
-                    {
-                        if (dependencyObject is MainWindow mainWindow)
-                        {
-                            mainWindow.Title = new FileInfo(_path).Name;
-                            break;
-                        }
-                        else
-                        {
-                            dependencyObject = LogicalTreeHelper.GetParent(dependencyObject);
-                        }
-                    }
                     _uri = new(_path);
                     _lib = new();
                     _media = new(_lib, _uri, new string[] { "input-repeat=65535" });
@@ -116,7 +103,6 @@ namespace MediaWPF
 
             string p = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Shaders");
             _shader = new Shader(Path.Combine(p, "shader.vert"), Path.Combine(p, "shaderSDR.frag"));
-            _shader.Use();
 
             textureUniformY = GL.GetUniformLocation(_shader.Handle, "tex_y");
             textureUniformU = GL.GetUniformLocation(_shader.Handle, "tex_u");
@@ -133,11 +119,15 @@ namespace MediaWPF
 
         private void GlMedia_Render(TimeSpan obj)
         {
+            GL.UseProgram(_shader.Handle);
+
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             GL.BindVertexArray(_vertexArrayObject);
             Display();
             GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
+
+            GL.UseProgram(0);
         }
 
         private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
