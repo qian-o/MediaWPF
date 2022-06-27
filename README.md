@@ -7,6 +7,10 @@
 
 **该项目实现参考雷霄骅大佬的博客，非常感谢他为音视频技术方向做出的贡献。**
 
+**实现原理：**<br>
+使用 [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) 库硬解码获取视频YUV420p（8bit、10bit）帧数据进行回调，采用[GLWpfControl](https://github.com/opentk/GLWpfControl) 控件用于呈现画面（该控件基于D3DImage，所以不存在空域问题）。<br>
+视频YUV数据 -> OpenGL -> Shader(YUV to RGB) -> 呈现画面
+
 **测试设备**<br>
 **处理器：** AMD Ryzen 7 5800H<br>
 **显卡：** Nvidia GeForce RTX 3050 Laptop GPU 4G<br>
@@ -35,7 +39,3 @@
 
 **四路 1080p SDR视频（前两个视频为30帧，后两个视频为25帧）**<br>
 ![image](https://user-images.githubusercontent.com/84434846/175896535-fbe35026-5b4b-4643-b53a-8497589c2631.png)
-
-**实现原理：**<br>
-使用 [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) 库硬解码获取视频YUV420p（8bit、10bit）帧数据进行回调，采用[GLWpfControl](https://github.com/opentk/GLWpfControl) 控件用于呈现画面（该控件基于D3DImage，所以不存在空域问题）。<br>
-视频YUV数据 -> OpenGL -> Shader(YUV to RGB) -> 呈现画面
