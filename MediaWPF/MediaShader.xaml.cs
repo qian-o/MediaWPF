@@ -194,46 +194,6 @@ namespace MediaWPF
 
         private void Display()
         {
-            if (!viewModel.IsInitTexture && _bufferY != null && _bufferU != null && _bufferV != null)
-            {
-                id_y = GL.GenTexture();
-                GL.BindTexture(TextureTarget.Texture2D, id_y);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, viewModel.VideoWidth, viewModel.VideoHeight, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-
-                id_u = GL.GenTexture();
-                GL.BindTexture(TextureTarget.Texture2D, id_u);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, viewModel.VideoWidth / 2, viewModel.VideoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-
-                id_v = GL.GenTexture();
-                GL.BindTexture(TextureTarget.Texture2D, id_v);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, viewModel.VideoWidth / 2, viewModel.VideoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-
-                buffer_y = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_y);
-                GL.BufferData(BufferTarget.ArrayBuffer, sizeY, IntPtr.Zero, BufferUsageHint.StreamCopy);
-
-                buffer_u = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_u);
-                GL.BufferData(BufferTarget.ArrayBuffer, sizeU, IntPtr.Zero, BufferUsageHint.StreamCopy);
-
-                buffer_v = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_v);
-                GL.BufferData(BufferTarget.ArrayBuffer, sizeV, IntPtr.Zero, BufferUsageHint.StreamCopy);
-
-                viewModel.IsInitTexture = true;
-            }
             if (viewModel.IsInitTexture)
             {
                 // Y
@@ -271,6 +231,49 @@ namespace MediaWPF
                 GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, viewModel.VideoWidth / 2, viewModel.VideoHeight / 2, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.Uniform1(textureUniformV, 2);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+            }
+            else
+            {
+                if (_bufferY != null && _bufferU != null && _bufferV != null)
+                {
+                    id_y = GL.GenTexture();
+                    GL.BindTexture(TextureTarget.Texture2D, id_y);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, viewModel.VideoWidth, viewModel.VideoHeight, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
+                    id_u = GL.GenTexture();
+                    GL.BindTexture(TextureTarget.Texture2D, id_u);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, viewModel.VideoWidth / 2, viewModel.VideoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
+                    id_v = GL.GenTexture();
+                    GL.BindTexture(TextureTarget.Texture2D, id_v);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, viewModel.VideoWidth / 2, viewModel.VideoHeight / 2, 0, PixelFormat.Red, PixelType.UnsignedByte, IntPtr.Zero);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
+                    buffer_y = GL.GenBuffer();
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_y);
+                    GL.BufferData(BufferTarget.ArrayBuffer, sizeY, IntPtr.Zero, BufferUsageHint.StreamCopy);
+
+                    buffer_u = GL.GenBuffer();
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_u);
+                    GL.BufferData(BufferTarget.ArrayBuffer, sizeU, IntPtr.Zero, BufferUsageHint.StreamCopy);
+
+                    buffer_v = GL.GenBuffer();
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, buffer_v);
+                    GL.BufferData(BufferTarget.ArrayBuffer, sizeV, IntPtr.Zero, BufferUsageHint.StreamCopy);
+
+                    viewModel.IsInitTexture = true;
+                }
             }
         }
     }
