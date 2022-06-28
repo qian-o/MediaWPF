@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace MediaWPF
@@ -123,18 +122,6 @@ namespace MediaWPF
             GL.UseProgram(0);
         }
 
-        private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            if (_mediaplayer.IsPlaying)
-            {
-                _mediaplayer.Pause();
-            }
-            else
-            {
-                _mediaplayer.Play();
-            }
-        }
-
         #region VLC解码
         private uint VideoFormat(ref IntPtr opaque, IntPtr chroma, ref uint width, ref uint height, IntPtr pitches, IntPtr lines)
         {
@@ -200,7 +187,7 @@ namespace MediaWPF
         public void DisplayVideo(IntPtr opaque, IntPtr picture)
         {
             stopWatch.Stop();
-            viewModel.TimeConsumingStatistics(stopWatch.ElapsedMilliseconds);
+            viewModel.TimeConsuming = stopWatch.ElapsedMilliseconds;
             stopWatch.Restart();
         }
         #endregion

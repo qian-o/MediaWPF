@@ -13,16 +13,13 @@
     <UserControl.CacheMode>
         <BitmapCache/>
     </UserControl.CacheMode>
-    <Grid Background="Black" MouseLeftButtonUp="Grid_MouseLeftButtonUp">
+    <Grid Background="Black">
         <Viewbox>
             <glWpfControl:GLWpfControl x:Name="glMedia" Width="{Binding VideoWidth}" Height="{Binding VideoHeight}" Loaded="GlMedia_Loaded" Render="GlMedia_Render"/>
         </Viewbox>
         <Grid Style="{StaticResource GridGradient}">
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,10,0,0" Foreground="White" FontSize="24" Text="{Binding FileName}"/>
-            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,20,0" TextBlock.Foreground="Green" TextBlock.FontSize="20">
-                <TextBlock HorizontalAlignment="Right" Text="{Binding FPS, StringFormat=FPS：{0}}"/>
-                <TextBlock Margin="0,5,0,0" Text='{Binding TimeConsuming, StringFormat=当前帧：{0} ms}'/>
-            </StackPanel>
+            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Top" Foreground="Green" FontSize="20" Text='{Binding TimeConsuming, StringFormat=当前帧：{0} ms}'/>
         </Grid>
     </Grid>
 </UserControl>
