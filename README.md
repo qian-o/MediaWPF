@@ -3,12 +3,13 @@
 # 代码实现仅供学习参考
 本项目视频渲染通过显卡进行视频解码，CPU几乎不参与工作，并且不存在令人烦躁的空域问题。<br>
 在播放摄像头多路视频或高分辨率、高帧率视频时可以极大发挥显卡性能（我认为该项目做到了这一点）。<br>
+支持各类网络协议如RTSP、RTMP、FLV等。<br>
 播放4k、8k视频也可以做到极佳的渲染效率。<br>
 
 **该项目实现参考雷霄骅大佬的博客，非常感谢他为音视频技术方向做出的贡献。**
 
 **实现原理：**<br>
-使用 [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) 库硬解码获取视频YUV420p（8bit、10bit）帧数据进行回调，采用[GLWpfControl](https://github.com/opentk/GLWpfControl) 控件用于呈现画面（该控件基于D3DImage，所以不存在空域问题）。<br>
+使用 [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) 库进行硬解码获取视频YUV格式（8bit、10bit）帧数据进行回调，采用[GLWpfControl](https://github.com/opentk/GLWpfControl) 控件用于呈现画面（该控件基于D3DImage，所以不存在空域问题）。<br>
 视频YUV数据 -> OpenGL -> Shader(YUV to RGB) -> 呈现画面
 
 **测试设备**<br>
