@@ -1,5 +1,5 @@
 # MediaWPF
-# Demo of video hardware decoding and rendering based on .NET 6 (no problem with the spatial domain) 
+# Demo of video hardware decoding and rendering based on .NET 6 (no airspace problem) 
 # Code implementation is for reference only 
 In this video rendering, videos are **decoded by a GPU**, and the CPU does not work in most cases. Besides, there is no vexing problem of the spatial domain. <br>
 
@@ -12,7 +12,7 @@ It also provides excellent rendering efficiency at the time of playing **4k and 
 **This project refers to Lei Xiaohua's blog, so we highly appreciate his contribution to audio and video technology.** 
 
 **Implementation principle:**<br>
-Hardware decoding is achieved through the [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) library to call back video frame data in **YUV format (8bit, 10bit)**, and the pictures are rendered through [GLWpfControl](https://github.com/opentk/GLWpfControl) (this control is based on D3DImage, so there is no problem with the spatial domain).<br> 
+Hardware decoding is achieved through the [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) library to call back video frame data in **YUV format (8bit, 10bit)**, and the pictures are rendered through [GLWpfControl](https://github.com/opentk/GLWpfControl) (this control is based on D3DImage, so there is no airspace problem).<br> 
 
 **Video YUV data -> OpenGL -> Shader(YUV to RGB) -> picture rendering** <br>
 
