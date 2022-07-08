@@ -8,6 +8,10 @@
 
 **该项目实现参考雷霄骅大佬的博客，非常感谢他为音视频技术方向做出的贡献。**
 
+# HDR视频支持
+**对于HDR视频，我在shader中暴露出伽马和对比度进行校正颜色**<br>
+![image](https://user-images.githubusercontent.com/84434846/177901427-05379688-e059-420f-b67c-c3fe1095a324.png)
+
 **实现原理：**<br>
 使用 [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) 库进行硬解码获取视频YUV格式（8bit、10bit）帧数据进行回调，采用[GLWpfControl](https://github.com/opentk/GLWpfControl) 控件用于呈现画面（该控件基于D3DImage，所以不存在空域问题）。<br>
 视频YUV数据 -> OpenGL -> Shader(YUV to RGB) -> 呈现画面
