@@ -11,7 +11,7 @@
         <viewmodels:MdeiaViewModel/>
     </UserControl.DataContext>
     <UserControl.CacheMode>
-        <BitmapCache/>
+        <BitmapCache RenderAtScale="4"/>
     </UserControl.CacheMode>
     <Grid Background="Black">
         <Viewbox>
