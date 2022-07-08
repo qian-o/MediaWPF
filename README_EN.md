@@ -11,6 +11,10 @@ It also provides excellent rendering efficiency at the time of playing **4k and 
 
 **This project refers to Lei Xiaohua's blog, so we highly appreciate his contribution to audio and video technology.** 
 
+# HDR support
+**For HDR video, I expose gamma and contrast in the shader to correct the color.**<br>
+![image](https://user-images.githubusercontent.com/84434846/177901427-05379688-e059-420f-b67c-c3fe1095a324.png)
+
 **Implementation principle:**<br>
 Hardware decoding is achieved through the [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) library to call back video frame data in **YUV format (8bit, 10bit)**, and the pictures are rendered through [GLWpfControl](https://github.com/opentk/GLWpfControl) (this control is based on D3DImage, so there is no airspace problem).<br> 
 
