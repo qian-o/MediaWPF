@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using MediaWPF.Controls;
+using MediaWPF.Models.MediaModel;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace MediaWPF
@@ -21,9 +23,13 @@ namespace MediaWPF
         private void BtnPlay_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            UserControl media = button.Content.ToString() == "SDR" ? new MediaShader(txtFile.Text) : new MediaShaderHDR(txtFile.Text);
-            media.Margin = new Thickness(5);
-            ungVideo.Children.Add(media);
+            //UserControl media = button.Content.ToString() == "SDR" ? new MediaShader(txtFile.Text) : new MediaShaderHDR(txtFile.Text);
+            //media.Margin = new Thickness(5);
+            //ungVideo.Children.Add(media);
+
+            MediaOpenGL mediaOpenGL = new(button.Content.ToString() == "SDR" ? new MediaSDR(txtFile.Text) : new MediaHDR(txtFile.Text));
+            mediaOpenGL.Margin = new Thickness(5);
+            ungVideo.Children.Add(mediaOpenGL);
         }
     }
 }
