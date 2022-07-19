@@ -39,8 +39,11 @@ namespace MediaWPF.Models.MediaModel
             sizeV = _bufferV.Length * 2;
 
             planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
+            lengthY = _bufferY.Length * 2;
             planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferU, 0);
+            lengthU = _bufferU.Length * 2;
             planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferV, 0);
+            lengthV = _bufferV.Length * 2;
 
             return base.VideoFormat(ref opaque, chroma, ref width, ref height, pitches, lines);
         }

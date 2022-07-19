@@ -32,6 +32,7 @@ namespace MediaWPF.Models
         protected MediaPlayer _mediaplayer;
         protected int sizeY, sizeU, sizeV;
         protected IntPtr planeY, planeU, planeV;
+        protected int lengthY, lengthU, lengthV;
         #endregion
         #region OpenGL
         protected int id_y, id_u, id_v;
@@ -204,7 +205,7 @@ namespace MediaWPF.Models
 
         public virtual void DisplayVideo(IntPtr opaque, IntPtr picture)
         {
-            // 呈现数据
+
         }
         #endregion
 
