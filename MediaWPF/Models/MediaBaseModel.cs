@@ -32,7 +32,6 @@ namespace MediaWPF.Models
         protected MediaPlayer _mediaplayer;
         protected int sizeY, sizeU, sizeV;
         protected IntPtr planeY, planeU, planeV;
-        protected int lengthY, lengthU, lengthV;
         #endregion
         #region OpenGL
         protected int id_y, id_u, id_v;
