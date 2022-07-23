@@ -1,41 +1,120 @@
 ﻿<Application x:Class="MediaWPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MediaWPF"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
-            <Style x:Key="GridGradient" TargetType="{x:Type Grid}">
-                <Setter Property="Opacity" Value="0"/>
-                <Setter Property="Background">
+            <!--窗体最小化-->
+            <Style x:Key="ButtonMin" TargetType="{x:Type Button}">
+                <Setter Property="MinHeight" Value="30"/>
+                <Setter Property="MinWidth" Value="45"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template">
                     <Setter.Value>
-                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                            <GradientStop Color="#303133" Offset="0"/>
-                            <GradientStop Color="#33303133" Offset="0.3"/>
-                            <GradientStop Color="Transparent" Offset="0.5"/>
-                            <GradientStop Color="#33303133" Offset="0.7"/>
-                            <GradientStop Color="#303133" Offset="1"/>
-                        </LinearGradientBrush>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border x:Name="brdBackground" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" Background="Transparent">
+                                <Path x:Name="pthIcon" HorizontalAlignment="Center" VerticalAlignment="Center" StrokeThickness="1" Stroke="#FFFFFF" Data="M0,0 L 9,0" SnapsToDevicePixels="False"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="brdBackground" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#FFFFFF" Duration="0:0:0.2"/>
+                                                <ColorAnimation Storyboard.TargetName="pthIcon" Storyboard.TargetProperty="Stroke.(SolidColorBrush.Color)" To="#000000" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="brdBackground" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="Transparent" Duration="0:0:0.2"/>
+                                                <ColorAnimation Storyboard.TargetName="pthIcon" Storyboard.TargetProperty="Stroke.(SolidColorBrush.Color)" To="#FFFFFF" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Trigger.EnterActions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </Trigger.EnterActions>
-                        <Trigger.ExitActions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5"/>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </Trigger.ExitActions>
-                    </Trigger>
-                </Style.Triggers>
+            </Style>
+            <!--窗体状态-->
+            <Style x:Key="ButtonState" TargetType="{x:Type Button}">
+                <Setter Property="MinHeight" Value="30"/>
+                <Setter Property="MinWidth" Value="45"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border x:Name="brdBackground" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" Background="Transparent">
+                                <Path x:Name="pthIcon" HorizontalAlignment="Center" VerticalAlignment="Center" StrokeThickness="1" Stroke="#FFFFFF" Data="M0,0 L 9,0 9,9 0,9 Z" SnapsToDevicePixels="False"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="brdBackground" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#FFFFFF" Duration="0:0:0.2"/>
+                                                <ColorAnimation Storyboard.TargetName="pthIcon" Storyboard.TargetProperty="Stroke.(SolidColorBrush.Color)" To="#000000" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="brdBackground" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="Transparent" Duration="0:0:0.2"/>
+                                                <ColorAnimation Storyboard.TargetName="pthIcon" Storyboard.TargetProperty="Stroke.(SolidColorBrush.Color)" To="#FFFFFF" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Normal">
+                                    <Setter TargetName="pthIcon" Property="Data" Value="M0,0 L 9,0 9,9 0,9 Z"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                                    <Setter TargetName="pthIcon" Property="Data" Value="M2,2 L 2,0 9,0 9,7 7,7 7,2 0,2 0,9 7,9 7,7"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--窗体关闭-->
+            <Style x:Key="ButtonClose" TargetType="{x:Type Button}">
+                <Setter Property="MinHeight" Value="30"/>
+                <Setter Property="MinWidth" Value="45"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border x:Name="brdBackground" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" Background="Transparent">
+                                <Path x:Name="pthIcon" HorizontalAlignment="Center" VerticalAlignment="Center" StrokeThickness="1" Stroke="#FFFFFF" Data="M0,0 L 9,9 M9,0 L 0,9" SnapsToDevicePixels="False"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="brdBackground" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#E81123" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="brdBackground" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="Transparent" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

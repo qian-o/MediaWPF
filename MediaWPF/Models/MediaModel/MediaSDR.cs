@@ -31,8 +31,8 @@ namespace MediaWPF.Models.MediaModel
             Marshal.Copy(line, 0, lines, pitche.Length);
 
             _bufferY = new byte[(int)width * (int)height];
-            _bufferU = new byte[(int)width / 2 * (int)height / 2];
-            _bufferV = new byte[(int)width / 2 * (int)height / 2];
+            _bufferU = new byte[(int)width * (int)height / 4];
+            _bufferV = new byte[(int)width * (int)height / 4];
 
             sizeY = _bufferY.Length;
             sizeU = _bufferU.Length;

@@ -1,4 +1,6 @@
 ﻿using LibVLCSharp.Shared;
+using MediaWPF.Common;
+using MediaWPF.Models.MediaModel;
 using MediaWPF.Shaders;
 using OpenTK.Graphics.OpenGL4;
 using System;
@@ -34,6 +36,7 @@ namespace MediaWPF.Models
         protected IntPtr planeY, planeU, planeV;
         #endregion
         #region OpenGL
+        protected bool isLoaded;
         protected int id_y, id_u, id_v;
         protected int buffer_y, buffer_u, buffer_v;
         protected int textureUniformY, textureUniformU, textureUniformV;
@@ -97,6 +100,7 @@ namespace MediaWPF.Models
         {
             _file = file;
             _hdr = hdr;
+            VideoFileInfo = new FileInfo(_file);
         }
 
         /// <summary>
@@ -104,20 +108,15 @@ namespace MediaWPF.Models
         /// </summary>
         public void Media_Loaded()
         {
-            if (File.Exists(_file))
+            _lib = new();
+            _media = new(_lib, new Uri(VideoFileInfo.FullName), new string[] { "input-repeat=65535" });
+            _mediaplayer = new(_media)
             {
-                VideoFileInfo = new FileInfo(_file);
-                _lib = new();
-                _media = new(_lib, new Uri(VideoFileInfo.FullName), new string[] { "input-repeat=65535" });
-                _mediaplayer = new(_media)
-                {
-                    EnableHardwareDecoding = true
-                };
-                _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
-                _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
-                _mediaplayer.Mute = true;
-                _mediaplayer.Play();
-            }
+                EnableHardwareDecoding = true
+            };
+            _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
+            _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
+            _mediaplayer.Play();
         }
 
         /// <summary>
@@ -125,29 +124,34 @@ namespace MediaWPF.Models
         /// </summary>
         public void OpenGL_Loaded()
         {
-            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            if (!isLoaded)
+            {
+                GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            _vertexArrayObject = GL.GenVertexArray();
-            GL.BindVertexArray(_vertexArrayObject);
+                _vertexArrayObject = GL.GenVertexArray();
+                GL.BindVertexArray(_vertexArrayObject);
 
-            _vertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StreamDraw);
+                _vertexBufferObject = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
+                GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StreamDraw);
 
-            string path = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Shaders");
-            _shader = new Shader(Path.Combine(path, "shader.vert"), Path.Combine(path, $"shader{(_hdr ? "HDR" : "SDR")}.frag"));
+                string path = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Shaders");
+                _shader = new Shader(Path.Combine(path, "shader.vert"), Path.Combine(path, $"shader{(_hdr ? "HDR" : "SDR")}.frag"));
 
-            textureUniformY = GL.GetUniformLocation(_shader.Handle, "tex_y");
-            textureUniformU = GL.GetUniformLocation(_shader.Handle, "tex_u");
-            textureUniformV = GL.GetUniformLocation(_shader.Handle, "tex_v");
+                textureUniformY = GL.GetUniformLocation(_shader.Handle, "tex_y");
+                textureUniformU = GL.GetUniformLocation(_shader.Handle, "tex_u");
+                textureUniformV = GL.GetUniformLocation(_shader.Handle, "tex_v");
 
-            int vertexLocation = _shader.GetAttribLocation("aPosition");
-            GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+                int vertexLocation = _shader.GetAttribLocation("aPosition");
+                GL.EnableVertexAttribArray(vertexLocation);
+                GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
-            int texCoordLocation = _shader.GetAttribLocation("aTexCoord");
-            GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+                int texCoordLocation = _shader.GetAttribLocation("aTexCoord");
+                GL.EnableVertexAttribArray(texCoordLocation);
+                GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
+                isLoaded = true;
+            }
         }
 
         /// <summary>
@@ -220,6 +224,18 @@ namespace MediaWPF.Models
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// 根据视频类型获取不同的实现类
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static MediaBaseModel GetMediaBase(string file)
+        {
+            string data = ClassHelper.RunFFmpeg($"-i \"{file}\"");
+            MediaBaseModel mediaBaseModel = data.Contains("yuv420p10") && data.Contains("bt2020") ? new MediaHDR(file) : new MediaSDR(file);
+            return mediaBaseModel;
         }
     }
 }
