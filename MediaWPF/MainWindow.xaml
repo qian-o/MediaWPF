@@ -40,6 +40,7 @@
                 <Grid Height="120" VerticalAlignment="Bottom">
                     <Border Background="#303133" Opacity="0.5"/>
                     <TextBlock x:Name="txbName" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFFFFF" FontSize="30"/>
+                    <TextBlock x:Name="txbDisplay" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Foreground="#FFFFFF" FontSize="22"/>
                 </Grid>
             </Grid>
         </Grid>

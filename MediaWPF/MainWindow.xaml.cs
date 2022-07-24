@@ -30,15 +30,20 @@ namespace MediaWPF
             if (openFileDialog.ShowDialog() == true)
             {
                 grdLoading.Visibility = Visibility.Visible;
+
                 MediaBaseModel mediaBase = null;
                 await Task.Run(delegate
                 {
                     mediaBase = MediaBaseModel.GetMediaBase(openFileDialog.FileName);
                 });
-                txbName.Text = mediaBase.VideoFileInfo.Name;
+
                 MediaOpenGL mediaOpenGL = new(mediaBase);
                 brdMedia.Child = mediaOpenGL;
                 brdMedia.ContextMenu = null;
+
+                txbName.Text = mediaBase.VideoFileInfo.Name;
+                txbDisplay.Text = "OpenGL";
+
                 grdLoading.Visibility = Visibility.Collapsed;
             }
         }
@@ -52,16 +57,21 @@ namespace MediaWPF
             if (openFileDialog.ShowDialog() == true)
             {
                 grdLoading.Visibility = Visibility.Visible;
+
                 bool hdr = false;
                 await Task.Run(delegate
                 {
                     hdr = ClassHelper.JudgeHdrVideo(openFileDialog.FileName);
                 });
                 MediaHandleModel mediaHandle = new(openFileDialog.FileName, hdr);
-                txbName.Text = mediaHandle.VideoFileInfo.Name;
+
                 MediaDirectX mediaDirectX = new(mediaHandle);
                 brdMedia.Child = mediaDirectX;
                 brdMedia.ContextMenu = null;
+
+                txbName.Text = mediaHandle.VideoFileInfo.Name;
+                txbDisplay.Text = "DirectX";
+
                 grdLoading.Visibility = Visibility.Collapsed;
             }
         }
