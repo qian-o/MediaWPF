@@ -14,7 +14,8 @@
             <Border x:Name="brdMedia" Background="Transparent">
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Open File" Click="MitOpenFile_Click"/>
+                        <MenuItem Header="Open File(OpenGL)" Click="MitOpenFileOpenGL_Click"/>
+                        <MenuItem Header="Open File(DirectX)" Click="MitOpenFileDirectX_Click"/>
                     </ContextMenu>
                 </Border.ContextMenu>
             </Border>

@@ -1,6 +1,5 @@
 ﻿using LibVLCSharp.Shared;
 using MediaWPF.Common;
-using MediaWPF.Models.MediaModel;
 using MediaWPF.Shaders;
 using OpenTK.Graphics.OpenGL4;
 using System;
@@ -9,7 +8,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MediaWPF.Models
+namespace MediaWPF.Models.OpenGL
 {
     public abstract class MediaBaseModel : INotifyPropertyChanged
     {
@@ -17,21 +16,21 @@ namespace MediaWPF.Models
 
         #region 变量
         #region Shader
-        protected readonly float[] _vertices =
+        protected readonly float[] vertices =
         {
             -1.0f, -1.0f, 0.0f, 0.0f, 1.0f,
              1.0f, -1.0f, 0.0f, 1.0f, 1.0f,
             -1.0f,  1.0f, 0.0f, 0.0f, 0.0f,
              1.0f,  1.0f, 0.0f, 1.0f, 0.0f
         };
-        protected int _vertexBufferObject;
-        protected int _vertexArrayObject;
-        protected Shader _shader;
+        protected int vertexBufferObject;
+        protected int vertexArrayObject;
+        protected Shader shader;
         #endregion
         #region VLC
-        protected LibVLC _lib;
-        protected Media _media;
-        protected MediaPlayer _mediaplayer;
+        protected LibVLC lib;
+        protected Media media;
+        protected MediaPlayer mediaplayer;
         protected int sizeY, sizeU, sizeV;
         protected IntPtr planeY, planeU, planeV;
         #endregion
@@ -108,15 +107,15 @@ namespace MediaWPF.Models
         /// </summary>
         public void Media_Loaded()
         {
-            _lib = new();
-            _media = new(_lib, new Uri(VideoFileInfo.FullName), new string[] { "input-repeat=65535" });
-            _mediaplayer = new(_media)
+            lib = new();
+            media = new(lib, new Uri(VideoFileInfo.FullName), new string[] { "input-repeat=65535" });
+            mediaplayer = new(media)
             {
                 EnableHardwareDecoding = true
             };
-            _mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
-            _mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
-            _mediaplayer.Play();
+            mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
+            mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
+            mediaplayer.Play();
         }
 
         /// <summary>
@@ -128,25 +127,25 @@ namespace MediaWPF.Models
             {
                 GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-                _vertexArrayObject = GL.GenVertexArray();
-                GL.BindVertexArray(_vertexArrayObject);
+                vertexArrayObject = GL.GenVertexArray();
+                GL.BindVertexArray(vertexArrayObject);
 
-                _vertexBufferObject = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-                GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StreamDraw);
+                vertexBufferObject = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
+                GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StreamDraw);
 
                 string path = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Shaders");
-                _shader = new Shader(Path.Combine(path, "shader.vert"), Path.Combine(path, $"shader{(_hdr ? "HDR" : "SDR")}.frag"));
+                shader = new Shader(Path.Combine(path, "shader.vert"), Path.Combine(path, $"shader{(_hdr ? "HDR" : "SDR")}.frag"));
 
-                textureUniformY = GL.GetUniformLocation(_shader.Handle, "tex_y");
-                textureUniformU = GL.GetUniformLocation(_shader.Handle, "tex_u");
-                textureUniformV = GL.GetUniformLocation(_shader.Handle, "tex_v");
+                textureUniformY = GL.GetUniformLocation(shader.Handle, "tex_y");
+                textureUniformU = GL.GetUniformLocation(shader.Handle, "tex_u");
+                textureUniformV = GL.GetUniformLocation(shader.Handle, "tex_v");
 
-                int vertexLocation = _shader.GetAttribLocation("aPosition");
+                int vertexLocation = shader.GetAttribLocation("aPosition");
                 GL.EnableVertexAttribArray(vertexLocation);
                 GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
-                int texCoordLocation = _shader.GetAttribLocation("aTexCoord");
+                int texCoordLocation = shader.GetAttribLocation("aTexCoord");
                 GL.EnableVertexAttribArray(texCoordLocation);
                 GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
@@ -159,11 +158,11 @@ namespace MediaWPF.Models
         /// </summary>
         public void OpenGL_Render()
         {
-            GL.UseProgram(_shader.Handle);
+            GL.UseProgram(shader.Handle);
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            GL.BindVertexArray(_vertexArrayObject);
+            GL.BindVertexArray(vertexArrayObject);
             Display();
             GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
 
@@ -173,7 +172,7 @@ namespace MediaWPF.Models
         #region VLC解码
         public virtual uint VideoFormat(ref IntPtr opaque, IntPtr chroma, ref uint width, ref uint height, IntPtr pitches, IntPtr lines)
         {
-            if (_mediaplayer.Media is Media media)
+            if (mediaplayer.Media is Media media)
             {
                 foreach (MediaTrack track in media.Tracks)
                 {
@@ -233,8 +232,7 @@ namespace MediaWPF.Models
         /// <returns></returns>
         public static MediaBaseModel GetMediaBase(string file)
         {
-            string data = ClassHelper.RunFFmpeg($"-i \"{file}\"");
-            MediaBaseModel mediaBaseModel = data.Contains("yuv420p10") && data.Contains("bt2020") ? new MediaHDR(file) : new MediaSDR(file);
+            MediaBaseModel mediaBaseModel = ClassHelper.JudgeHdrVideo(file) ? new MediaHDR(file) : new MediaSDR(file);
             return mediaBaseModel;
         }
     }

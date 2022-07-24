@@ -14,6 +14,7 @@
     <PackageReference Include="FFmpeg.Win64.Static" Version="4.1.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.2" />
+    <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.17.4" />

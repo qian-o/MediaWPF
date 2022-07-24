@@ -1,4 +1,4 @@
-﻿using MediaWPF.Models;
+﻿using MediaWPF.Models.OpenGL;
 using OpenTK.Wpf;
 using System;
 using System.Windows;

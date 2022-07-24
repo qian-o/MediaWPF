@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MediaWPF.Models.MediaModel
+namespace MediaWPF.Models.OpenGL
 {
     public class MediaSDR : MediaBaseModel
     {

@@ -1,5 +1,7 @@
-﻿using MediaWPF.Controls;
-using MediaWPF.Models;
+﻿using MediaWPF.Common;
+using MediaWPF.Controls;
+using MediaWPF.Models.DriectX;
+using MediaWPF.Models.OpenGL;
 using Microsoft.Win32;
 using System;
 using System.Threading.Tasks;
@@ -19,11 +21,11 @@ namespace MediaWPF
             InitializeComponent();
         }
 
-        private async void MitOpenFile_Click(object sender, RoutedEventArgs e)
+        private async void MitOpenFileOpenGL_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
             {
-                Filter = "Video Files|*.3g2;*.3gp;*.3gp2;*.3gpp;*.amrec;*.amv;*.asf;*.avi;*.bik;*.bin;*.crf;*.dav;*.divx;*.drc;*.dv;*.dvr-ms;*.evo;*.f4v;*.flv;*.gvi;*.gxf;*.iso;*.m1v;*.m2v;*.m2t;*.m2ts;*.m4v;*.mkv;*.mov;*.mp2;*.mp2v;*.mp4;*.mp4v;*.mpe;*.mpeg;*.mpeg1;*.mpeg2;*.mpeg4;*.mpg;*.mpv2;*.mts;*.mtv;*.mxf;*.mxg;*.nsv;*.nuv;*.ogg;*.ogm;*.ogv;*.ogx;*.ps;*.rec;*.rm;*.rmvb;*.rpl;*.thp;*.tod;*.tp;*.ts;*.tts;*.txd;*.vob;*.vro;*.webm;*.wm;*.wmv;*.wtv;*.xesc"
+                Filter = ClassHelper.pathFilter
             };
             if (openFileDialog.ShowDialog() == true)
             {
@@ -36,6 +38,29 @@ namespace MediaWPF
                 txbName.Text = mediaBase.VideoFileInfo.Name;
                 MediaOpenGL mediaOpenGL = new(mediaBase);
                 brdMedia.Child = mediaOpenGL;
+                brdMedia.ContextMenu = null;
+                grdLoading.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private async void MitOpenFileDirectX_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new()
+            {
+                Filter = ClassHelper.pathFilter
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                grdLoading.Visibility = Visibility.Visible;
+                bool hdr = false;
+                await Task.Run(delegate
+                {
+                    hdr = ClassHelper.JudgeHdrVideo(openFileDialog.FileName);
+                });
+                MediaHandleModel mediaHandle = new(openFileDialog.FileName, hdr);
+                txbName.Text = mediaHandle.VideoFileInfo.Name;
+                MediaDirectX mediaDirectX = new(mediaHandle);
+                brdMedia.Child = mediaDirectX;
                 brdMedia.ContextMenu = null;
                 grdLoading.Visibility = Visibility.Collapsed;
             }
