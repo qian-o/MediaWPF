@@ -256,7 +256,7 @@ namespace MediaWPF.Models.DriectX
                 D3DImage.Dispatcher.Invoke(delegate
                 {
                     D3DImage.Lock();
-                    D3DImage.SetBackBuffer(D3DResourceType.IDirect3DSurface9, _textureSurface.NativePointer, true);
+                    D3DImage.SetBackBuffer(D3DResourceType.IDirect3DSurface9, _textureSurface.NativePointer);
                     D3DImage.Unlock();
                     ImageRect = new Int32Rect(0, 0, D3DImage.PixelWidth, D3DImage.PixelHeight);
                 });
