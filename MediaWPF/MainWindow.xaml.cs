@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace MediaWPF
@@ -16,9 +17,28 @@ namespace MediaWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TimeSpan _lastRenderTime;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            CompositionTarget.Rendering += CompositionTarget_Rendering;
+        }
+
+        private void CompositionTarget_Rendering(object sender, EventArgs e)
+        {
+            if (e is RenderingEventArgs rendering)
+            {
+                if (rendering.RenderingTime == _lastRenderTime)
+                {
+                    return;
+                }
+                double time = (rendering.RenderingTime - _lastRenderTime).TotalMilliseconds;
+                Console.WriteLine($"耗时：{time}，帧率：{1000 / time}");
+
+                _lastRenderTime = rendering.RenderingTime;
+            }
         }
 
         private async void MitOpenFileOpenGL_Click(object sender, RoutedEventArgs e)
