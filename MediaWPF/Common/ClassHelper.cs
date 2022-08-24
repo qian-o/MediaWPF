@@ -24,7 +24,7 @@ namespace MediaWPF.Common
             {
                 StartInfo =
                 {
-                    FileName = Path.Combine(ffmpegPath,"ffmpeg.exe"),
+                    FileName = Path.Combine(ffmpegPath, "ffmpeg.exe"),
                     Arguments = args,
                     UseShellExecute = false,
                     CreateNoWindow = true,
