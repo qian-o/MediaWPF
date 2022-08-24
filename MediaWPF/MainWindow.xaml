@@ -16,6 +16,7 @@
                     <ContextMenu>
                         <MenuItem Header="Open File(OpenGL)" Click="MitOpenFileOpenGL_Click"/>
                         <MenuItem Header="Open File(DirectX)" Click="MitOpenFileDirectX_Click"/>
+                        <MenuItem Header="Open File(Skia)" Click="MitOpenFileSkia_Click"/>
                     </ContextMenu>
                 </Border.ContextMenu>
             </Border>

@@ -96,6 +96,27 @@ namespace MediaWPF
             }
         }
 
+        private void MitOpenFileSkia_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new()
+            {
+                Filter = ClassHelper.pathFilter
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                grdLoading.Visibility = Visibility.Visible;
+
+                MediaSkia mediaSkia = new(openFileDialog.FileName);
+                brdMedia.Child = mediaSkia;
+                brdMedia.ContextMenu = null;
+
+                txbName.Text = openFileDialog.SafeFileName;
+                txbDisplay.Text = "Skia";
+
+                grdLoading.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void Window_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Maximized)
