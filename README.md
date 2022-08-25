@@ -1,46 +1,26 @@
-# MediaWPF
-# 基于 .NET 6 实现视频硬解码渲染Demo（无空域问题）
-# 代码实现仅供学习参考
-本项目视频渲染通过显卡进行视频解码，CPU几乎不参与工作，并且不存在令人烦躁的空域问题。<br>
-在播放摄像头多路视频或高分辨率、高帧率视频时可以极大发挥显卡性能（我认为该项目做到了这一点）。<br>
-支持各类网络协议如RTSP、RTMP、FLV等。<br>
-播放4k、8k视频也可以做到极佳的渲染效率。<br>
-
-**该项目实现参考雷霄骅大佬的博客，非常感谢他为音视频技术方向做出的贡献。**
-
-# HDR视频支持
-**对于HDR视频，我在shader中暴露出伽马和对比度进行校正颜色**<br>
-![image](https://user-images.githubusercontent.com/84434846/177901427-05379688-e059-420f-b67c-c3fe1095a324.png)
+# MediaWPF（DirectX、OpenGL、Skia）
+# 视频播放控件并支持rtsp、rtmp等各类网络协议视频流
+# 支持多种渲染模式并不存在空域（airspace）问题
 
 **实现原理：**<br>
-使用 [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) 库进行硬解码获取视频YUV格式（8bit、10bit）帧数据进行回调，采用[GLWpfControl](https://github.com/opentk/GLWpfControl) 控件用于呈现画面（该控件基于D3DImage，所以不存在空域问题）。<br>
-视频YUV数据 -> OpenGL -> Shader(YUV to RGB) -> 呈现画面
+[LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp) 解码获取视频（8bit、10bit）帧数据<br>
+在DirectX、OpenGL模式中程序根据视频色彩空间自动选择8bit或10bit处理。<br>
+8bit：I420 支持DirectX、OpenGL、Skia<br>
+10bit：I0AL 支持DirectX、OpenGL<br>
+**Skia没有使用硬件加速，所以在效率上低于前两个图形库接口。**<br>
 
-**测试设备**<br>
-**处理器：** AMD Ryzen 7 5800H<br>
-**显卡：** Nvidia GeForce RTX 3050 Laptop GPU 4G<br>
+**4K 60帧**<br>
+设备：NVIDIA GeForce RTX 3050 Laptop GPU<br>
+OpenGL：<br>
+![image](https://user-images.githubusercontent.com/84434846/186556586-b4b7c44a-6145-4c8a-af92-781827902d62.png)
+DirectX：<br>
+![image](https://user-images.githubusercontent.com/84434846/186556958-05363bb7-cff9-42af-9713-6813ee647841.png)
+Skia：（这种cpu渲染图一乐）<br>
+![image](https://user-images.githubusercontent.com/84434846/186557210-de5013ca-ffad-4f73-a133-36dc93243578.png)
 
-**因笔记本依靠核显渲染画面，并且功耗方面有所限制，实际测试效率会存在一小方面影响。**
+说说结论：<br>
+OpenGL: 考虑到兼容性和跨平台，TA无疑是最好的选择。<br>
+DirectX：大微软提出的图形API性能指定没得挑，渲染上原生支持了YUV格式不需要像OpenGL一样在Shader中转换。（性能最佳）<br>
+Skia：本身这哥们是支持使用OpenGL进行硬件加速的，但无奈技术功底有限自己没能实现。<br>
 
-**4K 60帧 SDR视频**<br>
-**处理器占用率 5~10%**<br>
-**显卡占用率 40~50%**<br>
-![image](https://user-images.githubusercontent.com/84434846/175889091-417ee743-86a8-449a-b276-39c425c23e0a.png)
-
-**4K 60帧 HDR版本（视频亮度不足，在SDR屏幕上播放HDR视频都是经过色调映射的后处理，网上流传的转换矩阵基本都会丢失亮度）**<br>
-**处理器占用率 10~20%**<br>
-**显卡占用率 50~60%**<br>
-![image](https://user-images.githubusercontent.com/84434846/175889286-f808e55a-7ed0-44b7-bb94-069d5626b5f2.png)
-
-**4K 144帧 SDR视频（该视频为后期补帧实现高帧率，所以帧间隔不稳定）**<br>
-**处理器占用率 10~20%**<br>
-**显卡占用率 60~75%**<br>
-![image](https://user-images.githubusercontent.com/84434846/175889702-817eb4da-c223-4025-8d5f-36e7ba78cc7f.png)
-
-**8K 60帧 SDR视频（实际表现稳定在40~45帧左右）**<br>
-**处理器占用率 10~20%**<br>
-**显卡占用率 70~80%**<br>
-![image](https://user-images.githubusercontent.com/84434846/175890181-96c9c438-3e3f-4726-9d03-4e3cefecd613.png)
-
-**四路 1080p SDR视频（前两个视频为30帧，后两个视频为25帧）**<br>
-![image](https://user-images.githubusercontent.com/84434846/175896535-fbe35026-5b4b-4643-b53a-8497589c2631.png)
+**未来如果Maui的Skia库要是支持硬件加速的话，那个人认为，Skia在Maui框架中做视频播放那指定是🐂🖊。**
