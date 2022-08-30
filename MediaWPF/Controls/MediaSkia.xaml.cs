@@ -66,7 +66,6 @@ namespace MediaWPF.Controls
             };
             mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
             mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
-            mediaplayer.Mute = true;
             mediaplayer.Play();
         }
 
