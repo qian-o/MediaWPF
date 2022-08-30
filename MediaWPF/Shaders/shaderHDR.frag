@@ -26,7 +26,7 @@ void main()
     yuv.x = texture(tex_y, texCoord).x;
     yuv.y = texture(tex_u, texCoord).x;
     yuv.z = texture(tex_v, texCoord).x;
-    yuv = yuv * 64;
+    yuv = yuv * 64.0f;
     yuv.w = 1.0f;
     outputColor = yuv * YUV_TO_RGB_MATRIX * BT2020_BT709_MATRIX;
 }
