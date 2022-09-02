@@ -139,10 +139,7 @@ namespace MediaWPF.Controls
 
         private void DisplayVideo(IntPtr opaque, IntPtr picture)
         {
-            Dispatcher.Invoke(delegate
-            {
-                DrawFrame();
-            });
+            DrawFrame();
         }
         #endregion
 
@@ -153,14 +150,18 @@ namespace MediaWPF.Controls
                 YUV_RGB_8Bit(i, videoWidth, rgb_width, yuv_width, plane, planeY, planeU, planeV);
             });
 
-            bitmap.Lock();
-
-            SKCanvas canvas = surface.Canvas;
             SKImage image = SKImage.FromPixels(imageInfo, plane);
-            canvas.DrawImage(image, new SKPoint(0, 0));
 
-            bitmap.AddDirtyRect(rect);
-            bitmap.Unlock();
+            Dispatcher.Invoke(delegate
+            {
+                bitmap.Lock();
+
+                SKCanvas canvas = surface.Canvas;
+                canvas.DrawImage(image, new SKPoint(0, 0));
+
+                bitmap.AddDirtyRect(rect);
+                bitmap.Unlock();
+            });
         }
     }
 }
