@@ -21,13 +21,6 @@ namespace MediaWPF.Controls
         [DllImport(@"YUV_RGB.dll")]
         static extern void YUV_RGB_8Bit(int i, int videoWidth, int rgb_width, int yuv_width, IntPtr buffer, IntPtr bufferY, IntPtr bufferU, IntPtr bufferV);
 
-        private readonly float[] Rec709_limited_yuv_to_rgb = new float[]
-        {
-            1.164384f, -0.000000f,  1.792741f,  0.000000f, -0.972945f,
-            1.164384f, -0.213249f, -0.532909f,  0.000000f,  0.301483f,
-            1.164384f,  2.112402f, -0.000000f,  0.000000f, -1.133402f,
-            0.000000f,  0.000000f,  0.000000f,  1.000000f,  0.000000f
-        };
         private readonly string _file;
 
         #region VLC
@@ -91,10 +84,6 @@ namespace MediaWPF.Controls
             _bufferU = new byte[(int)width * (int)height / 4];
             _bufferV = new byte[(int)width * (int)height / 4];
 
-            sizeY = _bufferY.Length;
-            sizeU = _bufferU.Length;
-            sizeV = _bufferV.Length;
-
             planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
             planeU = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferU, 0);
             planeV = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferV, 0);
@@ -131,10 +120,6 @@ namespace MediaWPF.Controls
                 bitmap = new WriteableBitmap(videoWidth, videoHeight, 96, 96, PixelFormats.Pbgra32, null);
                 imageInfo = new SKImageInfo(videoWidth, videoHeight, SKColorType.Rgba8888);
                 surface = SKSurface.Create(new SKImageInfo(videoWidth, videoHeight, SKImageInfo.PlatformColorType, SKAlphaType.Premul), bitmap.BackBuffer, bitmap.BackBufferStride);
-                paint = new()
-                {
-                    ColorFilter = SKColorFilter.CreateColorMatrix(Rec709_limited_yuv_to_rgb)
-                };
                 rect = new Int32Rect(0, 0, videoWidth, videoHeight);
 
                 imgMedia.Width = videoWidth;
