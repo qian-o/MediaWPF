@@ -18,6 +18,9 @@ namespace MediaWPF.Controls
     /// </summary>
     public partial class MediaSkia : UserControl
     {
+        [DllImport(@"YUV_RGB.dll")]
+        static extern void YUV_RGB_8Bit(int i, int videoWidth, int rgb_width, int yuv_width, IntPtr buffer, IntPtr bufferY, IntPtr bufferU, IntPtr bufferV);
+
         private readonly float[] Rec709_limited_yuv_to_rgb = new float[]
         {
             1.164384f, -0.000000f,  1.792741f,  0.000000f, -0.972945f,
@@ -33,7 +36,6 @@ namespace MediaWPF.Controls
         private MediaPlayer mediaplayer;
         private int videoWidth;
         private int videoHeight;
-        private int sizeY, sizeU, sizeV;
         private IntPtr planeY, planeU, planeV;
         private byte[] _bufferY, _bufferU, _bufferV;
         #endregion
@@ -45,7 +47,6 @@ namespace MediaWPF.Controls
         private WriteableBitmap bitmap;
         private SKImageInfo imageInfo;
         private SKSurface surface;
-        private SKPaint paint;
         private Int32Rect rect;
         #endregion
 
@@ -160,34 +161,18 @@ namespace MediaWPF.Controls
         }
         #endregion
 
-        private unsafe void DrawFrame()
+        private void DrawFrame()
         {
             Parallel.For(0, videoHeight, i =>
             {
-                fixed (byte* data = buffer, dataY = _bufferY, dataU = _bufferU, dataV = _bufferV)
-                {
-                    int offSet = 0;
-                    for (int j = 0; j < videoWidth; j++)
-                    {
-                        byte Y = *(dataY + videoWidth * i + j);
-                        offSet = (i >> 1) * yuv_width + (j >> 1);
-                        byte U = *(dataU + offSet);
-                        byte V = *(dataV + offSet);
-
-                        offSet = rgb_width * i + j * 4;
-                        *(data + offSet) = Y;
-                        *(data + offSet + 1) = U;
-                        *(data + offSet + 2) = V;
-                        *(data + offSet + 3) = 255;
-                    }
-                }
+                YUV_RGB_8Bit(i, videoWidth, rgb_width, yuv_width, plane, planeY, planeU, planeV);
             });
 
             bitmap.Lock();
 
             SKCanvas canvas = surface.Canvas;
             SKImage image = SKImage.FromPixels(imageInfo, plane);
-            canvas.DrawImage(image, new SKPoint(0, 0), paint);
+            canvas.DrawImage(image, new SKPoint(0, 0));
 
             bitmap.AddDirtyRect(rect);
             bitmap.Unlock();
