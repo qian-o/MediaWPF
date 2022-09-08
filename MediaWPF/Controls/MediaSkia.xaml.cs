@@ -149,16 +149,13 @@ namespace MediaWPF.Controls
             {
                 YUV_RGB_8Bit(i, videoWidth, rgb_width, yuv_width, plane, planeY, planeU, planeV);
             });
-
             SKImage image = SKImage.FromPixels(imageInfo, plane);
+            SKCanvas canvas = surface.Canvas;
+            canvas.DrawImage(image, new SKPoint(0, 0));
 
             Dispatcher.Invoke(delegate
             {
                 bitmap.Lock();
-
-                SKCanvas canvas = surface.Canvas;
-                canvas.DrawImage(image, new SKPoint(0, 0));
-
                 bitmap.AddDirtyRect(rect);
                 bitmap.Unlock();
             });
