@@ -2,7 +2,7 @@ char Adjust(double tmp)
 {
 	return (unsigned char)((tmp >= 0 && tmp <= 255) ? tmp : (tmp < 0 ? 0 : 255));
 }
-extern "C" __declspec(dllexport) void YUV_RGB_8Bit(int i, int videoWidth, int rgb_width, int yuv_width, unsigned char* buffer, unsigned char* bufferY, unsigned char* bufferU, unsigned char* bufferV)
+extern __declspec(dllexport) void YUV_RGB_8Bit(int i, int videoWidth, int rgb_width, int yuv_width, unsigned char* buffer, unsigned char* bufferY, unsigned char* bufferU, unsigned char* bufferV)
 {
 	unsigned char Y, U, V;
 	int offSet;
