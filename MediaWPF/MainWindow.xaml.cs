@@ -41,6 +41,7 @@ namespace MediaWPF
             }
         }
 
+        #region OpenGL
         private async void MitOpenFileOpenGL_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
@@ -67,7 +68,9 @@ namespace MediaWPF
                 grdLoading.Visibility = Visibility.Collapsed;
             }
         }
+        #endregion
 
+        #region DirectX
         private async void MitOpenFileDirectX_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
@@ -95,7 +98,9 @@ namespace MediaWPF
                 grdLoading.Visibility = Visibility.Collapsed;
             }
         }
+        #endregion
 
+        #region Skia
         private void MitOpenFileSkia_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
@@ -116,6 +121,21 @@ namespace MediaWPF
                 grdLoading.Visibility = Visibility.Collapsed;
             }
         }
+
+        private void MitDirectShowSkia_Click(object sender, RoutedEventArgs e)
+        {
+            grdLoading.Visibility = Visibility.Visible;
+
+            MediaSkia mediaSkia = new("dshow://");
+            brdMedia.Child = mediaSkia;
+            brdMedia.ContextMenu = null;
+
+            txbName.Text = "DirectShow";
+            txbDisplay.Text = "Skia";
+
+            grdLoading.Visibility = Visibility.Collapsed;
+        }
+        #endregion
 
         private void Window_StateChanged(object sender, EventArgs e)
         {

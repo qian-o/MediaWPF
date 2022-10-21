@@ -41,6 +41,8 @@
                         <MenuItem Header="Skia">
                             <MenuItem Header="Open File"
                                       Click="MitOpenFileSkia_Click" />
+                            <MenuItem Header="DirectShow"
+                                      Click="MitDirectShowSkia_Click" />
                         </MenuItem>
                     </ContextMenu>
                 </Border.ContextMenu>
