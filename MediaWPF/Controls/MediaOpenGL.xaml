@@ -2,13 +2,16 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
-             x:Name="conMedia" Loaded="ConMedia_Loaded">
+             x:Name="conMedia"
+             Loaded="ConMedia_Loaded">
     <UserControl.CacheMode>
-        <BitmapCache/>
+        <BitmapCache />
     </UserControl.CacheMode>
     <Grid Background="Black">
         <Viewbox>
-            <glWpfControl:GLWpfControl x:Name="glMedia" Loaded="GlMedia_Loaded" Render="GlMedia_Render"/>
+            <glWpfControl:GLWpfControl x:Name="glMedia"
+                                       Loaded="GlMedia_Loaded"
+                                       Render="GlMedia_Render" />
         </Viewbox>
     </Grid>
 </UserControl>

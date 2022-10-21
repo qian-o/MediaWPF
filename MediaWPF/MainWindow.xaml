@@ -1,47 +1,93 @@
 ﻿<Window x:Class="MediaWPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="clr-namespace:MediaWPF.Controls"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:MediaWPF.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280" Background="Black" StateChanged="Window_StateChanged">
+        Title="MainWindow"
+        Height="720"
+        Width="1280"
+        Background="Black"
+        StateChanged="Window_StateChanged">
     <WindowChrome.WindowChrome>
-        <WindowChrome UseAeroCaptionButtons="False" NonClientFrameEdges="None" CaptionHeight="0"/>
+        <WindowChrome UseAeroCaptionButtons="False"
+                      NonClientFrameEdges="None"
+                      CaptionHeight="0" />
     </WindowChrome.WindowChrome>
-    <Grid x:Name="grdMain" Background="Transparent" MouseMove="GrdMain_MouseMove" MouseLeave="GrdMain_MouseLeave" MouseLeftButtonUp="GrdMain_MouseLeftButtonUp">
+    <Grid x:Name="grdMain"
+          Background="Transparent"
+          MouseMove="GrdMain_MouseMove"
+          MouseLeave="GrdMain_MouseLeave"
+          MouseLeftButtonUp="GrdMain_MouseLeftButtonUp">
         <Grid x:Name="grdMedia">
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFFFFF" FontSize="25" Text="Right click to open video."/>
-            <Border x:Name="brdMedia" Background="Transparent">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Foreground="#FFFFFF"
+                       FontSize="25"
+                       Text="Right click to open video." />
+            <Border x:Name="brdMedia"
+                    Background="Transparent">
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Open File(OpenGL)" Click="MitOpenFileOpenGL_Click"/>
-                        <MenuItem Header="Open File(DirectX)" Click="MitOpenFileDirectX_Click"/>
-                        <MenuItem Header="Open File(Skia)" Click="MitOpenFileSkia_Click"/>
+                        <MenuItem Header="OpenGL">
+                            <MenuItem Header="Open File"
+                                      Click="MitOpenFileOpenGL_Click" />
+                        </MenuItem>
+                        <MenuItem Header="DirectX">
+                            <MenuItem Header="Open File"
+                                      Click="MitOpenFileDirectX_Click" />
+                        </MenuItem>
+                        <MenuItem Header="Skia">
+                            <MenuItem Header="Open File"
+                                      Click="MitOpenFileSkia_Click" />
+                        </MenuItem>
                     </ContextMenu>
                 </Border.ContextMenu>
             </Border>
-            <Grid x:Name="grdLoading" Background="#E6303133" Visibility="Collapsed">
-                <controls:Loading Foreground="#67C23A"/>
+            <Grid x:Name="grdLoading"
+                  Background="#E6303133"
+                  Visibility="Collapsed">
+                <controls:Loading Foreground="#67C23A" />
             </Grid>
         </Grid>
         <Grid x:Name="grdControl">
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <Border Background="#303133" Opacity="0.5"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button x:Name="btnMin" Style="{DynamicResource ButtonMin}" Click="BtnMin_Click"/>
-                    <Button x:Name="btnState" Style="{DynamicResource ButtonState}" Click="BtnState_Click"/>
-                    <Button x:Name="btnClose" Style="{DynamicResource ButtonClose}" Click="BtnClose_Click"/>
+                <Border Background="#303133"
+                        Opacity="0.5" />
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <Button x:Name="btnMin"
+                            Style="{DynamicResource ButtonMin}"
+                            Click="BtnMin_Click" />
+                    <Button x:Name="btnState"
+                            Style="{DynamicResource ButtonState}"
+                            Click="BtnState_Click" />
+                    <Button x:Name="btnClose"
+                            Style="{DynamicResource ButtonClose}"
+                            Click="BtnClose_Click" />
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="1">
-                <Grid Height="120" VerticalAlignment="Bottom">
-                    <Border Background="#303133" Opacity="0.5"/>
-                    <TextBlock x:Name="txbName" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFFFFF" FontSize="30"/>
-                    <TextBlock x:Name="txbDisplay" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Foreground="#FFFFFF" FontSize="22"/>
+                <Grid Height="120"
+                      VerticalAlignment="Bottom">
+                    <Border Background="#303133"
+                            Opacity="0.5" />
+                    <TextBlock x:Name="txbName"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="#FFFFFF"
+                               FontSize="30" />
+                    <TextBlock x:Name="txbDisplay"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Bottom"
+                               Margin="0,0,10,10"
+                               Foreground="#FFFFFF"
+                               FontSize="22" />
                 </Grid>
             </Grid>
         </Grid>
