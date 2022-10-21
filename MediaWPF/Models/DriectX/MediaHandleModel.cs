@@ -2,7 +2,6 @@
 using MediaWPF.Common;
 using SharpDX;
 using SharpDX.Direct3D9;
-using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;

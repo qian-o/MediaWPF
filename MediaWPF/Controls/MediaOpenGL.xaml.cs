@@ -1,6 +1,5 @@
 ﻿using MediaWPF.Models.OpenGL;
 using OpenTK.Wpf;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 

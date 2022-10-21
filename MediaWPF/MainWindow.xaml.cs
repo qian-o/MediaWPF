@@ -3,8 +3,6 @@ using MediaWPF.Controls;
 using MediaWPF.Models.DriectX;
 using MediaWPF.Models.OpenGL;
 using Microsoft.Win32;
-using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;

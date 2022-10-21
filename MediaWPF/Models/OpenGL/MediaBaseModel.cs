@@ -2,7 +2,6 @@
 using MediaWPF.Common;
 using MediaWPF.Shaders;
 using OpenTK.Graphics.OpenGL4;
-using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
