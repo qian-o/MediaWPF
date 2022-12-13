@@ -83,6 +83,13 @@ namespace MediaWPF.Models.OpenGL
                 GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, VideoWidth / 2, VideoHeight / 2, PixelFormat.Red, PixelType.UnsignedShort, IntPtr.Zero);
                 GL.Uniform1(textureUniformV, 2);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+
+                float luminance = 1000.0f;
+                shader.SetInt("isConvert", 1);
+                shader.SetFloat("toneP1", 10000.0f / luminance * (2.0f / 1.4f));
+                shader.SetFloat("toneP2", luminance / (100.0f * 1.4f));
+                shader.SetFloat("contrast", 0.5f);
+                shader.SetFloat("brightness", 0.5f);
             }
             else
             {

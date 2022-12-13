@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Effects\Hdr2sdrEffect.ps" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FFmpeg.Win64.Static" Version="4.1.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.2" />
@@ -26,6 +30,10 @@
     <Reference Include="LibVLCSharp">
       <HintPath>Lib\vlc\LibVLCSharp.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Effects\Hdr2sdrEffect.ps" />
   </ItemGroup>
 
   <ItemGroup>

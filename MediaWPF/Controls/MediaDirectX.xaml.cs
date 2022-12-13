@@ -39,6 +39,7 @@ namespace MediaWPF.Controls
             _media.Media_Loaded(dpiScaleX, dpiScaleY);
 
             imgMedia.Source = _media.D3DImage;
+            imgMedia.SetBinding(EffectProperty, nameof(_media.Effect));
             imgMedia.SetBinding(WidthProperty, nameof(_media.VideoWidth));
             imgMedia.SetBinding(HeightProperty, nameof(_media.VideoHeight));
         }

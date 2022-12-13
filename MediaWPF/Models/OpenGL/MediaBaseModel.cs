@@ -2,7 +2,6 @@
 using MediaWPF.Common;
 using MediaWPF.Shaders;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -141,17 +140,6 @@ namespace MediaWPF.Models.OpenGL
                 textureUniformY = GL.GetUniformLocation(shader.Handle, "tex_y");
                 textureUniformU = GL.GetUniformLocation(shader.Handle, "tex_u");
                 textureUniformV = GL.GetUniformLocation(shader.Handle, "tex_v");
-                if (_hdr)
-                {
-                    Vector3 vector3 = new()
-                    {
-                        X = 1000.0f,
-                        Y = 10000.0f / 1000.0f * (2.0f / 1.4f),
-                        Z = 1000.0f / (100.0f * 1.4f)
-                    };
-                    shader.SetVector3("config", vector3);
-                    shader.SetInt("isConvert", 1);
-                }
 
                 int vertexLocation = shader.GetAttribLocation("aPosition");
                 GL.EnableVertexAttribArray(vertexLocation);

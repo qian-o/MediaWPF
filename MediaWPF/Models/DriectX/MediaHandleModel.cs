@@ -1,5 +1,6 @@
 ﻿using LibVLCSharp.Shared;
 using MediaWPF.Common;
+using MediaWPF.Effects;
 using SharpDX;
 using SharpDX.Direct3D9;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media.Effects;
 
 namespace MediaWPF.Models.DriectX
 {
@@ -42,6 +44,7 @@ namespace MediaWPF.Models.DriectX
         private int videoWidth;
         private int videoHeight;
         private D3DImage d3DImage;
+        private ShaderEffect effect;
         private Int32Rect imageRect;
 
         /// <summary>
@@ -97,6 +100,19 @@ namespace MediaWPF.Models.DriectX
         }
 
         /// <summary>
+        /// 着色器
+        /// </summary>
+        public ShaderEffect Effect
+        {
+            get => effect;
+            set
+            {
+                effect = value;
+                OnPropertyChanged(nameof(Effect));
+            }
+        }
+
+        /// <summary>
         /// 画面形状
         /// </summary>
         public Int32Rect ImageRect
@@ -123,6 +139,18 @@ namespace MediaWPF.Models.DriectX
         public void Media_Loaded(double dpiScaleX = 1.0, double dpiScaleY = 1.0)
         {
             D3DImage = new D3DImage(dpiScaleX, dpiScaleY);
+            if (_hdr)
+            {
+                float luminance = 1000.0f;
+                Hdr2sdrEffect sdrEffect = new()
+                {
+                    ToneP1 = 10000.0f / luminance * (2.0f / 1.4f),
+                    ToneP2 = luminance / (100.0f * 1.4f),
+                    Contrast = 0.5f,
+                    Brightness = 0.5f
+                };
+                Effect = sdrEffect;
+            }
 
             _lib = new();
             _media = new(_lib, new Uri(VideoFileInfo.FullName), new string[] { "input-repeat=65535" });

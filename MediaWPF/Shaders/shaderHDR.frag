@@ -8,8 +8,11 @@ uniform sampler2D tex_y;
 uniform sampler2D tex_u;
 uniform sampler2D tex_v;
 
-uniform vec3 config;
 uniform int isConvert;
+uniform float toneP1;
+uniform float toneP2;
+uniform float contrast;
+uniform float brightness;
 
 const mat4 YUV_TO_RGB_MATRIX = mat4(
     1.167808f, -0.000000f,  1.683611f, -0.915688f,
@@ -63,10 +66,13 @@ void main()
     if (isConvert == 1)
     {
         color.xyz = inversePQ(color.xyz);
-        color.xyz *= config.y;
-        color.xyz = hable(color.xyz * vec3(config.z)) / hable(vec3(config.z));
+        color.xyz *= toneP1;
+        color.xyz = hable(color.xyz * vec3(toneP2)) / hable(vec3(toneP2));
         color.xyz = pow(color.xyz, vec3(1.0f / 2.2f));
     }
+
+    color *= contrast * 2.0f;
+    color += brightness - 0.5f;
 
     outputColor = color;
 }
