@@ -60,7 +60,7 @@ void main()
     yuv.w = 1.0f;
     color = yuv * YUV_TO_RGB_MATRIX * BT2020_BT709_MATRIX;
 
-    if(isConvert == 1)
+    if (isConvert == 1)
     {
         color.xyz = inversePQ(color.xyz);
         color.xyz *= config.y;
