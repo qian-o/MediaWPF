@@ -2,6 +2,7 @@
 using MediaWPF.Common;
 using MediaWPF.Shaders;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -38,6 +39,7 @@ namespace MediaWPF.Models.OpenGL
         protected int id_y, id_u, id_v;
         protected int buffer_y, buffer_u, buffer_v;
         protected int textureUniformY, textureUniformU, textureUniformV;
+        protected int luminance, toneP1, toneP2;
         #endregion
         private readonly string _file;
         private readonly bool _hdr;
@@ -114,6 +116,7 @@ namespace MediaWPF.Models.OpenGL
             };
             mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
             mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
+            mediaplayer.Mute = true;
             mediaplayer.Play();
         }
 
@@ -139,6 +142,19 @@ namespace MediaWPF.Models.OpenGL
                 textureUniformY = GL.GetUniformLocation(shader.Handle, "tex_y");
                 textureUniformU = GL.GetUniformLocation(shader.Handle, "tex_u");
                 textureUniformV = GL.GetUniformLocation(shader.Handle, "tex_v");
+                if (_hdr)
+                {
+                    toneP1 = GL.GetUniformLocation(shader.Handle, "g_toneP1");
+                    toneP2 = GL.GetUniformLocation(shader.Handle, "g_toneP2");
+
+                    Vector3 vector3 = new()
+                    {
+                        X = 600.0f,
+                        Y = 10000.0f / 600.0f * (2.0f / 1.4f),
+                        Z = 600.0f / (100.0f * 1.4f)
+                    };
+                    shader.SetVector3("config", vector3);
+                }
 
                 int vertexLocation = shader.GetAttribLocation("aPosition");
                 GL.EnableVertexAttribArray(vertexLocation);
