@@ -9,6 +9,7 @@ uniform sampler2D tex_u;
 uniform sampler2D tex_v;
 
 uniform vec3 config;
+uniform int isConvert;
 
 const mat4 YUV_TO_RGB_MATRIX = mat4(
     1.167808f, -0.000000f,  1.683611f, -0.915688f,
@@ -21,8 +22,6 @@ const mat4 BT2020_BT709_MATRIX = mat4(
     -0.124550f,  1.132899f, -0.008349f,  0.000000f,
     -0.018150f, -0.100578f,  1.118729f,  0.000000f,
      0.000000f,  0.000000f,  0.000000f,  1.000000f);
-
-const vec3 bt709coefs = vec3(0.2126f, 1.0f - 0.2126f - 0.0722f, 0.0722f);
 
 // HDR to SDR color convert (Thanks to KODI community https://github.com/thexai/xbmc)
 const float ST2084_m1 = 2610.0f / (4096.0f * 4.0f);
@@ -61,9 +60,13 @@ void main()
     yuv.w = 1.0f;
     color = yuv * YUV_TO_RGB_MATRIX * BT2020_BT709_MATRIX;
 
-    color.xyz = inversePQ(color.xyz);
-    color.xyz *= config.y;
-    color.xyz = hable(color.xyz * vec3(config.z)) / hable(vec3(config.z));
-    color.xyz = pow(color.xyz, vec3(1.0f / 2.2f));
+    if(isConvert == 1)
+    {
+        color.xyz = inversePQ(color.xyz);
+        color.xyz *= config.y;
+        color.xyz = hable(color.xyz * vec3(config.z)) / hable(vec3(config.z));
+        color.xyz = pow(color.xyz, vec3(1.0f / 2.2f));
+    }
+
     outputColor = color;
 }

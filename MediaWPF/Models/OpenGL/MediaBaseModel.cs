@@ -116,7 +116,6 @@ namespace MediaWPF.Models.OpenGL
             };
             mediaplayer.SetVideoFormatCallbacks(VideoFormat, null);
             mediaplayer.SetVideoCallbacks(LockVideo, null, DisplayVideo);
-            mediaplayer.Mute = true;
             mediaplayer.Play();
         }
 
@@ -144,16 +143,14 @@ namespace MediaWPF.Models.OpenGL
                 textureUniformV = GL.GetUniformLocation(shader.Handle, "tex_v");
                 if (_hdr)
                 {
-                    toneP1 = GL.GetUniformLocation(shader.Handle, "g_toneP1");
-                    toneP2 = GL.GetUniformLocation(shader.Handle, "g_toneP2");
-
                     Vector3 vector3 = new()
                     {
-                        X = 600.0f,
-                        Y = 10000.0f / 600.0f * (2.0f / 1.4f),
-                        Z = 600.0f / (100.0f * 1.4f)
+                        X = 1000.0f,
+                        Y = 10000.0f / 1000.0f * (2.0f / 1.4f),
+                        Z = 1000.0f / (100.0f * 1.4f)
                     };
                     shader.SetVector3("config", vector3);
+                    shader.SetInt("isConvert", 1);
                 }
 
                 int vertexLocation = shader.GetAttribLocation("aPosition");
