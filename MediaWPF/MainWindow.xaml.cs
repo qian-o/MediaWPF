@@ -1,9 +1,11 @@
 ﻿using MediaWPF.Common;
 using MediaWPF.Controls;
+using MediaWPF.Effects;
 using MediaWPF.Models.DriectX;
 using MediaWPF.Models.OpenGL;
 using Microsoft.Win32;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -88,6 +90,47 @@ namespace MediaWPF
 
                 txbName.Text = mediaHandle.VideoFileInfo.Name;
                 txbDisplay.Text = "DirectX";
+
+                grdLoading.Visibility = Visibility.Collapsed;
+            }
+        }
+        #endregion
+
+        #region MediaElement
+        private void MitOpenFileMediaElement_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new()
+            {
+                Filter = ClassHelper.pathFilter
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                grdLoading.Visibility = Visibility.Visible;
+
+                bool hdr = ClassHelper.JudgeHdrVideo(openFileDialog.FileName, out double maxLuminance);
+
+                MediaElement mediaElement = new()
+                {
+                    LoadedBehavior = MediaState.Play,
+                    Source = new Uri(openFileDialog.FileName)
+                };
+                if (hdr)
+                {
+                    Hdr2sdrEffect sdrEffect = new()
+                    {
+                        ToneP1 = Convert.ToSingle(10000.0f / maxLuminance * (2.0f / 1.4f)),
+                        ToneP2 = Convert.ToSingle(maxLuminance / (100.0f * 1.4f)),
+                        Contrast = 0.5f,
+                        Brightness = 0.5f
+                    };
+                    mediaElement.Effect = sdrEffect;
+                }
+
+                brdMedia.Child = mediaElement;
+                brdMedia.ContextMenu = null;
+
+                txbName.Text = openFileDialog.SafeFileName;
+                txbDisplay.Text = "MediaElement";
 
                 grdLoading.Visibility = Visibility.Collapsed;
             }

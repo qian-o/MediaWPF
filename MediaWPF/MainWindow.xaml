@@ -38,6 +38,10 @@
                             <MenuItem Header="Open File"
                                       Click="MitOpenFileDirectX_Click" />
                         </MenuItem>
+                        <MenuItem Header="MediaElement">
+                            <MenuItem Header="Open File"
+                                      Click="MitOpenFileMediaElement_Click" />
+                        </MenuItem>
                         <MenuItem Header="Skia">
                             <MenuItem Header="Open File"
                                       Click="MitOpenFileSkia_Click" />
