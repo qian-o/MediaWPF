@@ -69,7 +69,7 @@ namespace MediaWPF
         #endregion
 
         #region DirectX
-        private async void MitOpenFileDirectX_Click(object sender, RoutedEventArgs e)
+        private void MitOpenFileDirectX_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
             {
@@ -79,12 +79,8 @@ namespace MediaWPF
             {
                 grdLoading.Visibility = Visibility.Visible;
 
-                bool hdr = false;
-                await Task.Run(delegate
-                {
-                    hdr = ClassHelper.JudgeHdrVideo(openFileDialog.FileName);
-                });
-                MediaHandleModel mediaHandle = new(openFileDialog.FileName, hdr);
+                bool hdr = ClassHelper.JudgeHdrVideo(openFileDialog.FileName, out double maxLuminance);
+                MediaHandleModel mediaHandle = new(openFileDialog.FileName, hdr, maxLuminance);
 
                 MediaDirectX mediaDirectX = new(mediaHandle);
                 brdMedia.Child = mediaDirectX;

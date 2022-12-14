@@ -232,8 +232,7 @@ namespace MediaWPF.Models.OpenGL
         /// <returns></returns>
         public static MediaBaseModel GetMediaBase(string file)
         {
-            MediaBaseModel mediaBaseModel = ClassHelper.JudgeHdrVideo(file) ? new MediaHDR(file) : new MediaSDR(file);
-            return mediaBaseModel;
+            return ClassHelper.JudgeHdrVideo(file, out double maxLuminance) ? new MediaHDR(file, maxLuminance) : new MediaSDR(file);
         }
     }
 }

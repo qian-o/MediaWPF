@@ -6,11 +6,12 @@ namespace MediaWPF.Models.OpenGL
 {
     public class MediaHDR : MediaBaseModel
     {
+        private double _maxLuminance;
         private ushort[] _bufferY, _bufferU, _bufferV;
 
-        public MediaHDR(string file) : base(file, true)
+        public MediaHDR(string file, double maxLuminance) : base(file, true)
         {
-
+            _maxLuminance = maxLuminance;
         }
 
         public override uint VideoFormat(ref IntPtr opaque, IntPtr chroma, ref uint width, ref uint height, IntPtr pitches, IntPtr lines)
@@ -84,10 +85,9 @@ namespace MediaWPF.Models.OpenGL
                 GL.Uniform1(textureUniformV, 2);
                 GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
 
-                float luminance = 1000.0f;
                 shader.SetInt("isConvert", 1);
-                shader.SetFloat("toneP1", 10000.0f / luminance * (2.0f / 1.4f));
-                shader.SetFloat("toneP2", luminance / (100.0f * 1.4f));
+                shader.SetFloat("toneP1", Convert.ToSingle(10000.0f / _maxLuminance * (2.0f / 1.4f)));
+                shader.SetFloat("toneP2", Convert.ToSingle(_maxLuminance / (100.0f * 1.4f)));
                 shader.SetFloat("contrast", 0.5f);
                 shader.SetFloat("brightness", 0.5f);
             }

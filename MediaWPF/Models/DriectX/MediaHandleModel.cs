@@ -37,6 +37,7 @@ namespace MediaWPF.Models.DriectX
         #endregion
         private readonly string _file;
         private readonly bool _hdr;
+        private readonly double _maxLuminance;
         #endregion
 
         #region 属性
@@ -126,10 +127,11 @@ namespace MediaWPF.Models.DriectX
         }
         #endregion
 
-        public MediaHandleModel(string file, bool hdr)
+        public MediaHandleModel(string file, bool hdr, double maxLuminance)
         {
             _file = file;
             _hdr = hdr;
+            _maxLuminance = maxLuminance;
             VideoFileInfo = new FileInfo(_file);
         }
 
@@ -141,11 +143,10 @@ namespace MediaWPF.Models.DriectX
             D3DImage = new D3DImage(dpiScaleX, dpiScaleY);
             if (_hdr)
             {
-                float luminance = 1000.0f;
                 Hdr2sdrEffect sdrEffect = new()
                 {
-                    ToneP1 = 10000.0f / luminance * (2.0f / 1.4f),
-                    ToneP2 = luminance / (100.0f * 1.4f),
+                    ToneP1 = Convert.ToSingle(10000.0f / _maxLuminance * (2.0f / 1.4f)),
+                    ToneP2 = Convert.ToSingle(_maxLuminance / (100.0f * 1.4f)),
                     Contrast = 0.5f,
                     Brightness = 0.5f
                 };
