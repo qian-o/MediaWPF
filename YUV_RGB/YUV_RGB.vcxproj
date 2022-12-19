@@ -44,10 +44,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\MediaWPF\bin\x64\Debug\net6.0-windows</OutDir>
+    <OutDir>..\MediaWPF\bin\x64\Debug\net6.0-windows\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\MediaWPF\bin\x64\Release\net6.0-windows</OutDir>
+    <OutDir>..\MediaWPF\bin\x64\Release\net6.0-windows\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
