@@ -1,4 +1,5 @@
 ﻿using MediaInfo;
+using Silk.NET.Direct3D9;
 using System.IO;
 using System.Runtime.InteropServices;
 using MediaInfoEx = MediaInfo.MediaInfo;
@@ -57,6 +58,11 @@ namespace MediaWPF.Common
         public static IntPtr RunMemcpy(IntPtr dest, IntPtr source, int length)
         {
             return Memcpy(dest, source, length);
+        }
+
+        public static Format MakeFourCC(byte c1, byte c2, byte c3, byte c4)
+        {
+            return (Format)((((((c4 << 8) | c3) << 8) | c2) << 8) | c1);
         }
 
         private static Dictionary<string, Dictionary<string, string>> FormatPairs(string data, bool isGroup = true)

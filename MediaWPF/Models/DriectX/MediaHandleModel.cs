@@ -1,8 +1,8 @@
 ﻿using LibVLCSharp.Shared;
 using MediaWPF.Common;
 using MediaWPF.Effects;
-using SharpDX;
-using SharpDX.Direct3D9;
+using Silk.NET.Direct3D9;
+using Silk.NET.Maths;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -13,7 +13,7 @@ using System.Windows.Media.Effects;
 
 namespace MediaWPF.Models.DriectX
 {
-    public class MediaHandleModel : INotifyPropertyChanged
+    public unsafe class MediaHandleModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -27,13 +27,12 @@ namespace MediaWPF.Models.DriectX
         private IntPtr _planeY, _planeUV;
         #endregion
         #region Direct3D
-        private Direct3DEx _direct3D;
-        private DisplayModeEx _displayMode;
-        private DeviceEx _device;
-        private Texture _texture;
-        private Surface _textureSurface;
-        private Surface _surface;
-        private bool isInitTexture;
+        IDirect3D9Ex* _direct3D9;
+        IDirect3DDevice9Ex* _device;
+        IDirect3DTexture9* _texture;
+        IDirect3DSurface9* _textureSurface;
+        IDirect3DSurface9* _surface;
+        private bool _isInitTexture;
         #endregion
         private readonly string _file;
         private readonly bool _hdr;
@@ -42,8 +41,8 @@ namespace MediaWPF.Models.DriectX
 
         #region 属性
         private FileInfo videoFileInfo;
-        private int videoWidth;
-        private int videoHeight;
+        private uint videoWidth;
+        private uint videoHeight;
         private D3DImage d3DImage;
         private ShaderEffect effect;
         private Int32Rect imageRect;
@@ -64,7 +63,7 @@ namespace MediaWPF.Models.DriectX
         /// <summary>
         /// 视频宽度
         /// </summary>
-        public int VideoWidth
+        public uint VideoWidth
         {
             get => videoWidth;
             set
@@ -77,7 +76,7 @@ namespace MediaWPF.Models.DriectX
         /// <summary>
         /// 视频高度
         /// </summary>
-        public int VideoHeight
+        public uint VideoHeight
         {
             get => videoHeight;
             set
@@ -169,7 +168,7 @@ namespace MediaWPF.Models.DriectX
         /// </summary>
         public void RefreshImage()
         {
-            if (isInitTexture)
+            if (_isInitTexture)
             {
                 D3DImage.Lock();
                 D3DImage.AddDirtyRect(ImageRect);
@@ -237,10 +236,10 @@ namespace MediaWPF.Models.DriectX
             _planeY = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferY, 0);
             _planeUV = Marshal.UnsafeAddrOfPinnedArrayElement(_bufferUV, 0);
 
-            VideoWidth = (int)width;
-            VideoHeight = (int)height;
+            VideoWidth = width;
+            VideoHeight = height;
 
-            InitSharpDX();
+            InitDirect3D9();
 
             return 1;
         }
@@ -258,53 +257,58 @@ namespace MediaWPF.Models.DriectX
         }
         #endregion
 
-        #region SharpDX
-        private void InitSharpDX()
+        #region Direct3D9
+        private void InitDirect3D9()
         {
-            if (!isInitTexture)
+            if (!_isInitTexture)
             {
                 Format format = _hdr
-                    ? D3DX.MakeFourCC((byte)'P', (byte)'0', (byte)'1', (byte)'0')
-                    : D3DX.MakeFourCC((byte)'N', (byte)'V', (byte)'1', (byte)'2');
-                _direct3D = new Direct3DEx();
-                _displayMode = _direct3D.GetAdapterDisplayModeEx(0);
+                    ? ClassHelper.MakeFourCC((byte)'P', (byte)'0', (byte)'1', (byte)'0')
+                    : ClassHelper.MakeFourCC((byte)'N', (byte)'V', (byte)'1', (byte)'2');
+
+                D3D9.GetApi().Direct3DCreate9Ex(D3D9.SdkVersion, ref _direct3D9);
+
+                Displaymodeex pMode = new((uint)sizeof(Displaymodeex));
+                _direct3D9->GetAdapterDisplayModeEx(D3D9.AdapterDefault, ref pMode, null);
+
                 PresentParameters presentParameters = new()
                 {
                     BackBufferWidth = VideoWidth,
                     BackBufferHeight = VideoHeight,
-                    Windowed = true,
-                    SwapEffect = SwapEffect.Discard,
+                    Windowed = 1,
+                    SwapEffect = Swapeffect.Discard,
                     BackBufferFormat = Format.Unknown
                 };
-                _device = new DeviceEx(_direct3D, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.Multithreaded | CreateFlags.HardwareVertexProcessing, presentParameters);
-                _texture = new Texture(_device, VideoWidth, VideoHeight, 1, Usage.RenderTarget, _displayMode.Format, Pool.Default);
-                _textureSurface = _texture.GetSurfaceLevel(0);
-                _surface = Surface.CreateOffscreenPlainEx(_device, VideoWidth, VideoHeight, format, Pool.Default, Usage.None);
+                _direct3D9->CreateDeviceEx(D3D9.AdapterDefault, Devtype.Hal, 0, D3D9.CreateMultithreaded | D3D9.CreateHardwareVertexprocessing, ref presentParameters, (Displaymodeex*)IntPtr.Zero, ref _device);
+                _device->CreateTexture(VideoWidth, VideoHeight, 1, D3D9.UsageRendertarget, pMode.Format, Pool.Default, ref _texture, null);
+                _texture->GetSurfaceLevel(0, ref _textureSurface);
+                _device->CreateOffscreenPlainSurfaceEx(VideoWidth, VideoHeight, format, Pool.Default, ref _surface, null, 0);
 
                 D3DImage.Dispatcher.Invoke(delegate
                 {
                     D3DImage.Lock();
-                    D3DImage.SetBackBuffer(D3DResourceType.IDirect3DSurface9, _textureSurface.NativePointer);
+                    D3DImage.SetBackBuffer(D3DResourceType.IDirect3DSurface9, (IntPtr)_textureSurface);
                     D3DImage.Unlock();
                     ImageRect = new Int32Rect(0, 0, D3DImage.PixelWidth, D3DImage.PixelHeight);
                 });
 
-                isInitTexture = true;
+                _isInitTexture = true;
             }
         }
 
         private void Render()
         {
-            DataRectangle dataRectangle = _surface.LockRectangle(LockFlags.DoNotWait);
-            IntPtr dataPointer = dataRectangle.DataPointer;
+            LockedRect pLockedRect;
+            _surface->LockRect(&pLockedRect, (Rectangle<int>*)IntPtr.Zero, D3D9.LockDonotwait);
+            IntPtr dataPointer = (IntPtr)pLockedRect.PBits;
 
             ClassHelper.RunMemcpy(dataPointer, _planeY, _sizeY);
             dataPointer += _sizeY;
             ClassHelper.RunMemcpy(dataPointer, _planeUV, _sizeUV);
 
-            _surface.UnlockRectangle();
+            _surface->UnlockRect();
 
-            _device.StretchRectangle(_surface, null, _textureSurface, null, TextureFilter.Linear);
+            _device->StretchRect(_surface, null, _textureSurface, null, Texturefiltertype.Linear);
         }
         #endregion
 
