@@ -299,7 +299,7 @@ namespace MediaWPF.Models.DriectX
         private void Render()
         {
             LockedRect pLockedRect;
-            _surface->LockRect(&pLockedRect, (Rectangle<int>*)IntPtr.Zero, D3D9.LockDonotwait);
+            _surface->LockRect(&pLockedRect, (Box2D<int>*)IntPtr.Zero, D3D9.LockDonotwait);
             IntPtr dataPointer = (IntPtr)pLockedRect.PBits;
 
             ClassHelper.RunMemcpy(dataPointer, _planeY, _sizeY);
