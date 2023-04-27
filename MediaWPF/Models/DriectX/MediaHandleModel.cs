@@ -266,7 +266,7 @@ namespace MediaWPF.Models.DriectX
                     ? ClassHelper.MakeFourCC((byte)'P', (byte)'0', (byte)'1', (byte)'0')
                     : ClassHelper.MakeFourCC((byte)'N', (byte)'V', (byte)'1', (byte)'2');
 
-                D3D9.GetApi().Direct3DCreate9Ex(D3D9.SdkVersion, ref _direct3D9);
+                D3D9.GetApi(null).Direct3DCreate9Ex(D3D9.SdkVersion, ref _direct3D9);
 
                 Displaymodeex pMode = new((uint)sizeof(Displaymodeex));
                 _direct3D9->GetAdapterDisplayModeEx(D3D9.AdapterDefault, ref pMode, null);
