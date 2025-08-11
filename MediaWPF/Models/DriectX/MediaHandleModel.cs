@@ -301,11 +301,29 @@ namespace MediaWPF.Models.DriectX
             LockedRect pLockedRect;
             _surface->LockRect(&pLockedRect, (Box2D<int>*)IntPtr.Zero, D3D9.LockDonotwait);
             IntPtr dataPointer = (IntPtr)pLockedRect.PBits;
-
-            ClassHelper.RunMemcpy(dataPointer, _planeY, _sizeY);
-            dataPointer += _sizeY;
-            ClassHelper.RunMemcpy(dataPointer, _planeUV, _sizeUV);
-
+            if (pLockedRect.Pitch == VideoWidth)
+            {
+                ClassHelper.RunMemcpy(dataPointer, _planeY, _sizeY);
+                dataPointer += _sizeY;
+                ClassHelper.RunMemcpy(dataPointer, _planeUV, _sizeUV);
+            }
+            else
+            {
+                var srcPtr = _planeY;
+                for (int i = 0; i < videoHeight; i++)
+                {
+                    ClassHelper.RunMemcpy(dataPointer, srcPtr, (int)VideoWidth);
+                    dataPointer += pLockedRect.Pitch;
+                    srcPtr += (int)VideoWidth;
+                }
+                srcPtr = _planeUV;
+                for (int i = 0; i < videoHeight >> 1; i++)
+                {
+                    ClassHelper.RunMemcpy(dataPointer, srcPtr, (int)VideoWidth);
+                    dataPointer += pLockedRect.Pitch;
+                    srcPtr += (int)VideoWidth;
+                }
+            }
             _surface->UnlockRect();
 
             _device->StretchRect(_surface, null, _textureSurface, null, Texturefiltertype.Linear);
